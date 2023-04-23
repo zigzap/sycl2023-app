@@ -188,7 +188,9 @@ export function show_qscreen(screen, task, submit, utils) {
 
                 let radio = document.createElement("P");
                 radio.for = option;
-                radio.innerHTML = option;
+                if(_showOptionLabels) {
+                    radio.innerHTML = option;
+                }
                 radio_col.appendChild(radio);
                 row.appendChild(radio_col);
             }

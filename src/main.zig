@@ -14,7 +14,17 @@ pub fn main() !void {
     _ = users;
 
     zap.Log.fio_set_log_level(zap.Log.fio_log_level_debug);
-    std.debug.print("\nAll your codebase are belong to us!\n", .{});
+    std.debug.print(
+        \\
+        \\
+        \\
+        \\ ======================================================
+        \\ ===   Visit me on http://127.0.0.1:5000/frontend   ===
+        \\ ======================================================
+        \\
+        \\
+        \\
+    , .{});
 
     var listener = zap.SimpleEndpointListener.init(allocator, .{
         .port = 5000,
@@ -31,8 +41,6 @@ pub fn main() !void {
     try listener.addEndpoint(frontendEndpoint.getFrontendEndpoint());
 
     try listener.listen();
-    std.debug.print("Listening on 0.0.0.0:5000\n", .{});
-
     // start worker threads
     zap.start(.{
         .threads = 4,

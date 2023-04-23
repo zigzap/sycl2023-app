@@ -4,7 +4,7 @@
     "tasktype": "welcome",
     "taskbody": {
       "heading": "Welcome to our experiment",
-      "body": "Hello and welcome to an online survey conducted by the Nuremberg Institute for Market Decisions, a not-for-profit organization for researching consumer and marketing decisions, as well as the founder and anchor shareholder of GfK SE.\n\nWith your help, we aim to test the idea of a new financial advisory system. Our aim is to investigate how the advisory system resonates with clients and what kind of investment experience it leads to. Participation is voluntary.\n\nThe data collected will be anonymized and used exclusively for research purposes, and all analyses will be carried out in such a way that no conclusions from the results can be drawn about the individual taking part.\n\nThe survey will take about 15-20 minutes of your time and consists of two parts: it starts with a test of the financial advisory system{{^textonly}}, in which you will be asked to interact with an advisor{{/textonly}}. Afterward, you will be asked questions about your experience with the system.\n\n### **Payment Information**\n\nPayout is calculated based on two parts: a fixed general participation compensation of £ 2.00 plus an additional amount depending on your performance, ranging from £ 1.00 to £ 1.53.\n\n### The **minimum payout is £ 3.00**.\n\n### The **maximum total payout achievable, including any bonuses, is: £ 3.53**.\n\nThe Prolific base reward is £ 3.00 and will always be paid if you complete this experiment. You will receive the rest of your payout, if there is a rest, as a bonus payment.\n\nExample:\n\n```\nFixed general participation compensation: £ 2.00\nFictional performance based amount:       £ 1.30\n- - - - - - - - - - - - - - - - - - - - - - - - -\nTotal payout would be:                    £ 3.30\n---------------------------------------------------\nYour Prolific reward (fixed) would be:    £ 3.00\nYour Prolific bonus payment would be:     £ 0.30 \n===================================================\n```\n \n\n### **To participate in the study, please note the following:**\n\n- Please ensure that your **browser is up-to-date** and that you are not using Safari. Choose **Chrome, Firefox or Edge**.\n\n- Unfortunately, mobile phones are not supported. **Please use a desktop device**, (e.g., PC or laptop).\n\n{{^textonly}}- During the study, **you will hear audio and video recordings**. Please make sure that you are in a **low-noise environment or use headphones**.\n\n{{/textonly}}- Please participate in the experiment **without interruption**. We have set a **maximum time of 30 minutes** for each respondent to participate.\n\n- You can only participate in the experiment **once**. The link will expire as soon as you join the experiment.\n\n- Please **do not use the \"Back\"-button of your browser**. It will bring up a warning, and your participation will be terminated prematurely.\n\nThank you very much for your support.\n\nIf you would like to participate in this study, please confirm the statements below and then click \"Continue\".",
+      "body": "Hello and welcome to an online survey conducted by the Nuremberg Institute for Market Decisions, a not-for-profit organization for researching consumer and marketing decisions, as well as the founder and anchor shareholder of GfK SE.\n\nWith your help, we aim to investigate how `SYCL 2023` resonates with its attendees. Participation is voluntary.\n\nThe data collected will be anonymized and used exclusively for research purposes, and all analyses will be carried out in such a way that no conclusions from the results can be drawn about the individual taking part.\n\nThe survey will take about 5 minutes of your time. You will be asked questions about your experience at `SYCL 2023`.\n\n### To participate in the study, please note the following:\n\n- Please participate in the experiment **without interruption**. We have set a **maximum time of 30 minutes** for each respondent to participate.\n\n- You can only participate in the experiment **once**. The link will expire as soon as you join the experiment.\n\n- Please **do not use the \"Back\"-button of your browser**.\n\nThank you very much for your support.\n\n`If you would like to participate in this study, please confirm the statements below and then click \"Continue\"`.",
       "agreement_check_caption": "Yes, I would like to participate in the study",
       "please_check_agreement_msg": "Please agree to the study participation",
       "data_protection_heading": "Data protection and privacy",
@@ -93,7 +93,7 @@
       }
     },
     "next_button": "Continue",
-    "next_task": 220
+    "next_task": 1101
   },
   "220": {
     "tasktype": "welcome",
@@ -129,7 +129,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1101_b": {
           "Question": "The advisor's gaze was focused.",
@@ -146,7 +146,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1101_c": {
           "Question": "I found the advisor's gaze behavior normal and not unnatural.",
@@ -163,7 +163,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1101_d": {
           "Question": "The advisor's gaze was intentional and not purely random.",
@@ -180,7 +180,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1101_e": {
           "Question": "I thought the advisor's gaze was natural.",
@@ -197,7 +197,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1101_f": {
           "Question": "The advisor looked in my direction more often than away from me.",
@@ -214,7 +214,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1101_g": {
           "Question": "The advisor looked directly at me.",
@@ -231,7 +231,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1101_h": {
           "Question": "The advisor made eye contact with me.",
@@ -248,7 +248,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1101_i": {
           "Question": "The advisor met my gaze.",
@@ -265,7 +265,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1101_j": {
           "Question": "The advisor looked me in the eye.",
@@ -282,7 +282,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -314,7 +314,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1110_b": {
           "Question": "... did you feel as if the advisor were a social being?",
@@ -331,7 +331,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1110_c": {
           "Question": "... did you feel as if the advisor were communicating with you?",
@@ -348,7 +348,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1110_d": {
           "Question": "... attention did you pay to the advisor?",
@@ -365,7 +365,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1110_e": {
           "Question": "... did you feel involved with the advisor?",
@@ -382,7 +382,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -413,7 +413,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1120_b": {
           "Question": "... can experience emotion.",
@@ -430,7 +430,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1120_c": {
           "Question": "... has a free will.",
@@ -447,7 +447,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1120_d": {
           "Question": "... has conciousness.",
@@ -464,7 +464,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1120_e": {
           "Question": "... has a mind of its own.",
@@ -481,7 +481,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -512,7 +512,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1130_b": {
           "Question": "I believe the advisor is competent.",
@@ -529,7 +529,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1130_c": {
           "Question": "I think that the advisor is proficient.",
@@ -546,7 +546,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1130_d": {
           "Question": "In my opinion, the advisor is trained.",
@@ -563,7 +563,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1130_e": {
           "Question": "In my opinion, the advisor is experienced.",
@@ -580,7 +580,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1130_f": {
           "Question": "I believe that the advisor is knowledgeable.",
@@ -597,7 +597,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -628,7 +628,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1140_b": {
           "Question": "If I required help, the advisor would do everything to help me.",
@@ -645,7 +645,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1140_c": {
           "Question": "The advisor is interested in my well-being, not just the company's.",
@@ -662,7 +662,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1140_d": {
           "Question": "The advisor is truthful.",
@@ -679,7 +679,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1140_e": {
           "Question": "I would characterize the advisor as honest.",
@@ -696,7 +696,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1140_f": {
           "Question": "The advisor would keep all its commitments.",
@@ -713,7 +713,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1140_g": {
           "Question": "The advisor is sincere and genuine.",
@@ -730,7 +730,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1140_h": {
           "Question": "The advisor is effective in providing financial advice.",
@@ -747,7 +747,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1140_i": {
           "Question": "The advisor performs the role of giving financial advice very well.",
@@ -764,7 +764,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1140_j": {
           "Question": "Overall, the advisor is a capable and proficient financial advice provider.",
@@ -781,7 +781,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1140_k": {
           "Question": "In general, the advisor is very knowledgeable about finance.",
@@ -798,7 +798,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -1054,7 +1054,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1210_b": {
           "Question": "I think the task was easy.",
@@ -1071,7 +1071,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1210_c": {
           "Question": "I felt competent enough to comply with the required tasks.",
@@ -1088,7 +1088,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1210_d": {
           "Question": "I was completely focused on the advisor's instructions.",
@@ -1105,7 +1105,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -1136,7 +1136,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1220_b": {
           "Question": "... made my investment decision more convenient.",
@@ -1153,7 +1153,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1220_c": {
           "Question": "... is likely to lead to the desired investment outcome.",
@@ -1170,7 +1170,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1220_d": {
           "Question": "... led to a new relevant investment portfolio.",
@@ -1187,7 +1187,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -1218,7 +1218,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1230_b": {
           "Question": "I am comfortable with my decision.",
@@ -1235,7 +1235,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1230_c": {
           "Question": "My decision is the right one for my situation.",
@@ -1252,7 +1252,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1230_d": {
           "Question": "I am satisfied with my decision.",
@@ -1269,7 +1269,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1230_e": {
           "Question": "It was easy to make a choice.",
@@ -1286,7 +1286,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -1317,7 +1317,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1240_b": {
           "Question": "The information was easy to understand.",
@@ -1334,7 +1334,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1240_c": {
           "Question": "There was enough information. More information would not have helped.",
@@ -1351,7 +1351,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1240_d": {
           "Question": "Consulting the financial advisor was a good decision. Consulting someone else would not have been more helpful.",
@@ -1368,7 +1368,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1240_e": {
           "Question": "I was glad I made the decision myself. I don't wish someone else would have made the decision for me.",
@@ -1385,7 +1385,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -1416,7 +1416,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1250_b": {
           "Question": "The advisor's performance met my expectation.",
@@ -1433,7 +1433,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1250_c": {
           "Question": "My level of satisfaction with the advisor is quite close to my ideal advisor's.",
@@ -1450,7 +1450,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -1481,7 +1481,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1260_b": {
           "Question": "I will recommend the advisor to someone who seeks my advice.",
@@ -1498,7 +1498,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1260_c": {
           "Question": "I will encourage friends and relatives to seek the advisor's recommendation.",
@@ -1515,7 +1515,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -1592,7 +1592,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1290_b": {
           "Question": "I have experience in interacting with robots.",
@@ -1609,7 +1609,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1290_c": {
           "Question": "I am familiar with robots.",
@@ -1626,7 +1626,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -1657,7 +1657,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1300_b": {
           "Question": "I like testing the functions of new technical systems.",
@@ -1674,7 +1674,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1300_c": {
           "Question": "It is not enough for me that a technical system works; I want to know how or why it works.",
@@ -1691,7 +1691,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1300_d": {
           "Question": "It is not enough for me to know the basic functions of a technical system. I'm also interested in the special functions.",
@@ -1708,7 +1708,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -1739,7 +1739,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1310_b": {
           "Question": "I am good at remembering conversations I have had.",
@@ -1756,7 +1756,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1310_c": {
           "Question": "I am good at remembering the order in which events occured.",
@@ -1773,7 +1773,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1310_d": {
           "Question": "I am good at remembering titles of books, films, and plays.",
@@ -1790,7 +1790,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1310_e": {
           "Question": "I am usually able to remember exactly where I read or heard a specific thing.",
@@ -1807,7 +1807,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -1838,7 +1838,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1320_b": {
           "Question": "I am familiar with stocks.",
@@ -1855,7 +1855,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1320_c": {
           "Question": "I am well informed about major economic news that impacts the stock market.",
@@ -1872,7 +1872,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1320_d": {
           "Question": "I have a high level of financial knowledge.",
@@ -1889,7 +1889,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },
@@ -2088,7 +2088,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1400_b": {
           "Question": "I made the right investment decision.",
@@ -2105,7 +2105,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         },
         "q1400_c": {
           "Question": "If I had to make the investment decision again, I would make the same investment decision.",
@@ -2122,7 +2122,7 @@
             "6",
             "7"
           ],
-          "show_option_labels": true
+          "show_option_labels": false
         }
       }
     },

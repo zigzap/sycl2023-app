@@ -1,22 +1,23 @@
+  @font-face { font-family: "Press Start 2P"; src: url('/frontend/press-start-2p.ttf'); }
+
 html {
   /* https://css-tricks.com/simplified-fluid-typography/ */
   /* font-size: clamp(100%, 1rem + 1vw, 42px); */
-  font-family: Roboto;
-  font-size: 16px;
-  font-size: clamp(1rem, 2.0vw , 42px);
+  /* font-family: Roboto; */
+  /* font-size: 16px; */
+  /* font-size: clamp(1rem, 2.0vw , 42px); */
+
+  /* https://css-tricks.com/simplified-fluid-typography/ */
+  /* font-size: clamp(100%, 1rem + 1vw, 42px); */
+  font-size: clamp(1rem, 1.0vw , 32px);
+  font-family: "Press Start 2P";
+  background-color: black;
 }
 
-/* @media screen and (min-width: 320px) { */
-/*   html { */
-/*     font-size: calc(16px + 6 * ((100vw - 320px) / 680)); */
-/*   } */
-/* } */
-/* @media screen and (min-width: 1000px) { */
-/*   html { */
-/*     font-size: 42px; */
-/*   } */
-/* }  */
-
+.body {
+    background-color: #181a1b;
+    text-color: white;
+}
 
 /* How to - Overlay  */
 /* from https://www.w3schools.com/howto/howto_css_overlay.asp */
@@ -41,13 +42,14 @@ html {
     margin-right:1rem;
 }
 .overlay-text h3 {
-    color: #cd192d;
+    /* color: #cd192d; */
+    color: white;
     text-align: center;
     font-size: clamp(1rem, 2.0vw , 42px);
 }
 
 .basic_screen {
-    background-color: #FAFAFA;
+    background-color: #181a1b;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -57,7 +59,7 @@ html {
 
 .basic_screen .title {
     text-align: center;
-    background-color: #F4F4F4;
+    /* background-color: #F4F4F4; */
     /* padding: 0.5em; */
     border-radius: 15px;
 }
@@ -81,7 +83,8 @@ html {
 }
 
 .welcome_screen .title {
-    color: #cd192d;
+    color: yellow;
+    color: #f7a41d;
 }
 
 .welcome_screen .divider {
@@ -114,8 +117,29 @@ html {
     width: 100%;
 }
 
+/* markdown text */
+.message {
+    color: #c8c3bc;
+    line-height: 150%;
+}
+
+.message h2 {
+    color: white;
+    line-height: 150%;
+}
+
+.message code { 
+    color: yellow;
+    font-family: "Press Start 2P";
+}
+
+.message strong {
+    color: white;
+}
+
 .message h3 {
-    color: #cd192d;
+    color: white;
+    line-height: 150%;
 }
 
 .basic_screen .next_div {
@@ -126,6 +150,7 @@ html {
 
 .basic_screen .nextbutton {
     color: white;
+    font-family: "Press Start 2P";
     background-color: #cd192d;
     border: none;
     text-align: center;
@@ -134,11 +159,13 @@ html {
     margin-top: 50px;
     padding: 15px 32px;
     font-weight: 100;
-    font-size: clamp(0.9rem, 1.8vw , 36px);
+    font-size: clamp(0.9rem, 1.0vw , 28px);
+    border-radius: 8px;
 }
 
 .basic_screen .dsbutton {
     color: white;
+    font-family: "Press Start 2P";
     background-color: grey;
     border: none;
     text-align: center;
@@ -147,19 +174,41 @@ html {
     margin-top: 50px;
     padding: 15px 32px;
     font-weight: 100;
-    font-size: clamp(0.9rem, 1.8vw , 36px);
+    font-size: clamp(0.9rem, 1.0vw , 28px);
     margin-right: 2em;
+    border-radius: 8px;
+}
+
+.q_screen {
+    color: yellow;
+    line-height: 150%;
+}
+
+.q_screen .message {
+    color: #c8c3bc;
+    line-height: 150%;
 }
 
 
+.qvert {
+    color: yellow;
+    color: #f7a41d;
+}
+
+.qhoriz {
+    color: yellow;
+    color: #f7a41d;
+}
 .qvert_option {
     /* padding: 15px; */
     padding-left: 12px;
     padding-bottom: 15px;
+    color: #909090;
 }
 
 .qhoriz table {
     border: none;
+    color: #f7a41d;
 }
 
 /* 
@@ -181,15 +230,17 @@ html {
 
 .qhoriz_leftscale {
     width: 7rem;
+    color: #4ccaf4;
 }
 .qhoriz_rightscale {
     width: 7rem;
+    color: #4ccaf4;
 }
 @media only screen and (min-width: 640px) {
     .qhoriz td {
       text-align: center;
         font-size: clamp(0.9rem, 1.8vw , 24px);
-        background-color: #F0F0F0;
+        background-color: #181a1b;
         padding-left: 1rem;
         padding-right: 1rem;
     }
