@@ -30,22 +30,33 @@ html {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #E0E0E0;
+  background-color: #181a1b;
   z-index: 100; /* Specify a stack order in case you're using a different order for other elements */
   cursor: pointer; /* Add a pointer on hover */
   text-color: white;
   overflow: scroll;
+  padding: 4px;
 }
 
 .overlay-text{
     margin-left:1rem;
     margin-right:1rem;
+    background-color: #181a1b;
+    color: #c8c3bc;
+    line-height: 150%;
 }
-.overlay-text h3 {
-    /* color: #cd192d; */
-    color: white;
+.overlay-text h2 {
+    color: magenta;
     text-align: center;
     font-size: clamp(1rem, 2.0vw , 42px);
+}
+.overlay-text h3 {
+    color: yellow;
+    text-align: center;
+    font-size: clamp(1rem, 2.0vw , 42px);
+}
+.overlay-text a {
+    color: #4ccaf4;
 }
 
 .basic_screen {

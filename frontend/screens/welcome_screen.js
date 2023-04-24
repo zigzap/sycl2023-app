@@ -156,7 +156,7 @@ export function show_welcome(screen, task, submit, utils) {
     }
 
     function show_datenschutz() {
-        overlay.innerHTML = "";
+        overlay.innerHTML = " ";
         let converter = new showdown.Converter();
         let overlay_text = document.createElement("P");
         let anywhere = "\n\n###Click anywhere to close this text\n\n";
