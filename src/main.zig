@@ -52,5 +52,5 @@ pub fn main() !void {
         // Try it with `zig build run-endpoint -Drelease-fast`
         .workers = 1,
     });
-    std.debug.print("Threads stopped\n", .{});
+    std.debug.print("\n\nThreads stopped\n", .{});
 }

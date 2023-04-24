@@ -3,7 +3,6 @@ json_template: std.json.ValueTree = undefined,
 
 const Self = @This();
 
-const dummy_data_json = @embedFile("data/mustache_data_2.json");
 
 pub fn init(a: std.mem.Allocator) !Self {
     var parser = std.json.Parser.init(a, false);

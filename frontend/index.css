@@ -200,6 +200,7 @@ html {
     line-height: 150%;
 }
 
+.q_screen strong { color: yellow; }
 
 .qvert {
     color: yellow;
@@ -233,7 +234,7 @@ html {
     /* padding-left: ; */
     /* padding-right: 0.3rem; */
 }
-/* the labels  */
+/* the option labels  */
 .qhoriz td p {
     font-size: clamp(0.5rem, 1.0vw , 18px);
     color: #808080;
@@ -250,7 +251,7 @@ html {
 @media only screen and (min-width: 640px) {
     .qhoriz td {
       text-align: center;
-        font-size: clamp(0.9rem, 1.8vw , 24px);
+        font-size: clamp(0.8rem, 0.9vw , 22px);
         background-color: #181a1b;
         padding-left: 1rem;
         padding-right: 1rem;
