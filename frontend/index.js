@@ -1,7 +1,9 @@
 import { show_welcome } from "./screens/welcome_screen.js?version=0";
 import { show_thankyou } from "./screens/thankyou_screen.js?version=0";
 import { show_qscreen } from "./screens/qscreen.js?version=0";
-import {loadUserTask, reloadTaskTemplate} from "./api.js?version=0";
+import { show_cheating } from "./screens/cheatscreen.js?version=0";
+import { loadUserTask, reloadTaskTemplate } from "./api.js?version=0";
+import { setCookie, getCookie } from "./cookies.js?version=0";
 
 var eScreen = document.getElementById("screen");
 
@@ -82,8 +84,26 @@ var utils = {
 
 async function init() {
     state.current_task_id = 0;
+
+    // TODO: while developing:
     reloadTaskTemplate();
-    load_next_task();
+
+    let cookie = getCookie("SYCL2023");
+
+    if(cookie != "" && cookie != "true") {
+        eScreen.innerHTML = ' ';
+        let task = {
+            tasktype: "cheating",
+            taskbody : {
+                heading: "Are you sure?",
+                body: "Participating more than once is considered `cheating` and will distort the collected survey data.",
+            },
+            next_button: "Yes, I want to cheat!"
+        };
+        show_cheating(eScreen, task, load_next_task, utils); 
+    } else {
+        load_next_task();
+    }
     // state.task = load_next_task();
     // if(state.task == null) return;
     //
@@ -96,6 +116,7 @@ init();
 
 function submit() {
     // post update to server and get next task
+    setCookie("SYCL2023", "agreed", 3);
     let next = state.task.next_task;
     let final = state.task.final;
     console.log("final is", final);

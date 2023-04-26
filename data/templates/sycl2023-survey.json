@@ -4,7 +4,7 @@
     "tasktype": "welcome",
     "taskbody": {
       "heading": "Welcome to the SYCL 2023 Survey",
-      "body": "Hello and welcome to an online survey conducted by the Nuremberg Institute for Market Decisions, a not-for-profit organization for researching consumer and marketing decisions, as well as the founder and anchor shareholder of GfK SE.\n\nWith your help, we aim to investigate how `SYCL 2023` resonates with its attendees. Participation is voluntary.\n\nThe data collected will be anonymized and used exclusively for research purposes, and all analyses will be carried out in such a way that no conclusions from the results can be drawn about the individual taking part.\n\nThe survey will take about 5 minutes of your time. You will be asked questions about your experience at `SYCL 2023`.\n\n### To participate in the study, please note the following:\n\n- Please participate in the experiment **without interruption**. We have set a **maximum time of 30 minutes** for each respondent to participate.\n\n- You can only participate in the experiment **once**. The link will expire as soon as you join the experiment.\n\n- Please **do not use the \"Back\"-button of your browser**.\n\nThank you very much for your support.\n\n`If you would like to participate in this study, please confirm the statements below and then click \"Continue\"`.",
+      "body": "Hello and welcome to an online survey conducted by **@renerocksai** from the Nuremberg Institute for Market Decisions, a not-for-profit organization for researching consumer and marketing decisions, as well as the founder and anchor shareholder of GfK SE. Because you wanted to know. \n\n With your help, we aim to investigate how `SYCL 2023` resonates with its attendees. Participation is voluntary.\n\nThe data collected will be anonymized and used exclusively for research purposes, and all analyses will be carried out in such a way that no conclusions from the results can be drawn about the individual taking part.\n\nThe survey will take about 5 minutes of your time. You will be asked questions about your experience at `SYCL 2023`.\n\n### To participate in the study, please note the following:\n\n- Please participate in the experiment **without interruption**. We have set a **maximum time of 5 minutes** for each respondent to participate.\n\n- You can only participate in the experiment **once**. The link will expire as soon as you join the experiment.\n\n- Please **do not use the \"Back\"-button of your browser**.\n\nThank you very much for your support.\n\n`If you would like to participate in this study, please confirm the statements below and then click \"Continue\"`.",
       "agreement_check_caption": "Yes, I would like to participate in the study",
       "please_check_agreement_msg": "Please agree to the study participation",
       "data_protection_heading": "Data protection and privacy",
@@ -97,7 +97,7 @@
 
   "1000": {
     "final_task": true,
-    "tasktype": "welcome",
+    "tasktype": "thankyou",
     "taskdesc": "The end",
     "taskbody": {
       "heading": "",
