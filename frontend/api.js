@@ -4,3 +4,8 @@ export function loadUserTask(userid, taskid, callback) {
     .then(data=>{return data.json()})
     .then(res=>{callback(res);});
 }
+
+export function reloadTaskTemplate() {
+    const url = "/sycl-api/tasks/reload";
+    fetch(url).then(_ => {})
+}

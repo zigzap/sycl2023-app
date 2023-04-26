@@ -1,7 +1,7 @@
 import { show_welcome } from "./screens/welcome_screen.js?version=0";
 import { show_thankyou } from "./screens/thankyou_screen.js?version=0";
 import { show_qscreen } from "./screens/qscreen.js?version=0";
-import {loadUserTask} from "./api.js?version=0";
+import {loadUserTask, reloadTaskTemplate} from "./api.js?version=0";
 
 var eScreen = document.getElementById("screen");
 
@@ -80,8 +80,9 @@ var utils = {
     },
 };
 
-function init() {
+async function init() {
     state.current_task_id = 0;
+    reloadTaskTemplate();
     load_next_task();
     // state.task = load_next_task();
     // if(state.task == null) return;
@@ -131,7 +132,7 @@ function run() {
 
     if(state.task) {
         // clear the div
-        eScreen.innerHTML = '';
+        eScreen.innerHTML = ' ';
         let ttype = state.task.tasktype;
         console.log("type is", ttype);
         switch(ttype) {
@@ -144,7 +145,6 @@ function run() {
             default:
                 console.log("unknown task type", ttype);
                 break;
-
         }
     }
 }

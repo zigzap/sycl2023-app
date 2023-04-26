@@ -34,7 +34,17 @@ pub fn main() !void {
     });
 
     // add endpoints
-    var tasksEndpoint = try TasksEndpoint.init(allocator, "/sycl-api/tasks");
+    var tasksEndpoint = blk: {
+        if (TasksEndpoint.init(allocator, "/sycl-api/tasks", "data/templates/sycl2023-survey.json")) |ep| {
+            break :blk ep;
+        } else |err| {
+            switch (err) {
+                error.FileNotFound => |e| std.debug.print("File not found: {any}\n", .{e}),
+                else => |e| std.debug.print("File not found: {any}\n", .{e}),
+            }
+            return;
+        }
+    };
     var frontendEndpoint = try FrontendEndpoint.init("/frontend");
 
     try listener.addEndpoint(tasksEndpoint.getTaskEndpoint());

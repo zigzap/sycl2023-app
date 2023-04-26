@@ -32,9 +32,10 @@ pub const RenderContext = struct {
 pub fn init(
     a: std.mem.Allocator,
     task_path: []const u8,
+    task_template_filn: []const u8,
 ) !Self {
     var ret: Self = .{
-        .tasks = try Tasks.init(a),
+        .tasks = try Tasks.init(a, task_template_filn),
         .alloc = a,
         .endpoint = zap.SimpleEndpoint.init(.{
             .path = task_path,
@@ -85,6 +86,9 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
             return self.listTasks(r);
         }
 
+        if (std.mem.endsWith(u8, p, "reload")) {
+            self.reloadTasks(r);
+        }
         // get userid from query
         if (r.query) |q| {
             if (userIdFromQuery(q)) |uid| {
@@ -94,7 +98,7 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                     return;
                 }
                 if (self.taskIdFromPath(p)) |taskid| {
-                    if (self.tasks.json_template.root.Object.get(taskid)) |*t| {
+                    if (self.tasks.json_template.?.root.Object.get(taskid)) |*t| {
                         // t.dump();
                         var buf: [100 * 1024]u8 = undefined;
                         var fba = std.heap.FixedBufferAllocator.init(&buf);
@@ -144,12 +148,20 @@ fn listTasks(self: *Self, r: zap.SimpleRequest) void {
     var buf: [100 * 1024]u8 = undefined;
     var fba = std.heap.FixedBufferAllocator.init(&buf);
     var string = std.ArrayList(u8).init(fba.allocator());
-    const t = self.tasks.json_template.root;
+    const t = self.tasks.json_template.?.root;
     if (t.jsonStringify(.{}, string.writer())) {
         r.sendJson(string.items) catch return;
     } else |err| {
         std.debug.print("/tasks LIST Error: {}\n", .{err});
         r.setStatus(.not_found);
         r.sendJson("{ \"status\": \"not found\"}") catch return;
+    }
+}
+
+fn reloadTasks(self: *Self, r: zap.SimpleRequest) void {
+    if (self.tasks.update()) {
+        r.sendJson("{ \"status\": \"OK\"}") catch return;
+    } else |_| {
+        r.sendJson("{ \"status\": \"error\"}") catch return;
     }
 }
