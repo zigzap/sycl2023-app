@@ -170,7 +170,6 @@ export function show_welcome(screen, task, submit, utils) {
                 overlay.style.display = "none";
             } 
         }
-        console.log("block");
     }
 }
 

@@ -190,6 +190,8 @@ export function show_qscreen(screen, task, submit, utils) {
                 radio.for = option;
                 if(_showOptionLabels) {
                     radio.innerHTML = option;
+                } else {
+                    radio.innerHTML = "&nbsp;";
                 }
                 radio_col.appendChild(radio);
                 row.appendChild(radio_col);
@@ -269,6 +271,7 @@ export function show_qscreen(screen, task, submit, utils) {
         let el = showQ(qid, _taskBody['questions'][qid]);
         screen.appendChild(el);
     }
+    screen.appendChild(document.createElement("HR"));
     utils.make_next_button(screen, task, _submit);
 }
 
