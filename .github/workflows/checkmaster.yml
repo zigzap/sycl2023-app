@@ -25,6 +25,13 @@ jobs:
       - name: Check zig version
         run: zig version
       - name: Build 
-        run: zig build
-      #- name: Build tests
-      #  run: zig build test
+        run: |
+          mkdir -p build
+          cp img/failing.svg build/badge.svg
+          cp README.md build/
+          zig build && cp img/passing.svg build.svg
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build
+          branch: gh-pages
