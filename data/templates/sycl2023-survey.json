@@ -50,10 +50,10 @@
       "shuffle_questions": false,
       "heading": null,
       "body": "Please let your choice indicate where your answer fits on the awesomeness scpectrum.",
-      "please_answer_msg": "Please answer the question.",
+      "please_answer_msg": "Please answer all questions.",
       "questions": {
         "Overall": {
-          "Question": "How are you liking the SYCL 2023 **experience** so far",
+          "Question": "How are you liking the SYCL 2023 **experience** so far?",
           "QType": "check_horizontal",
           "show_dividers": true,
           "scale_left": "O.K.",
@@ -70,7 +70,7 @@
           "show_option_labels": false
         },
         "Location": {
-          "Question": "How are you liking the SYCL 2023 **location** so far?",
+          "Question": "How are you enjoying the SYCL 2023 **location** so far?",
           "QType": "check_horizontal",
           "show_dividers": true,
           "scale_left": "O.K.",
@@ -101,7 +101,7 @@
     "taskdesc": "The end",
     "taskbody": {
       "heading": "",
-      "body": "Thank you very much for your participation in our experiment.",
+      "body": "Thank you very much for your participation in our survey.",
       "redirect_url": null
     },
     "next_button": null,
