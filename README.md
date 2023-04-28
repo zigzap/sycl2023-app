@@ -1,1 +1,1 @@
-![](https://github.com/zigzap/sycl2023-app/actions/workflows/mastercheck.yml/badge.svg)
+[![](https://app.zigzap.org/buildstatus/sycl2023-app.svg)](https://app.zigzap.org/buildstatus/sycl2023-app.txt)
