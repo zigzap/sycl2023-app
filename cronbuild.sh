@@ -1,5 +1,6 @@
 #!/bin/bash
 source /home/azureuser/.bashrc
+export PATH=/home/azureuser/bin:/home/azureuser/zig:$PATH
 
 set -e 
 
@@ -12,7 +13,7 @@ echo "$(date)" > $OUT_TXT
 
 
 echo zigup: >> $OUT_TXT
-zigup master >> $OUT_TXT 2>&1
+/home/azureuser/bin/zigup master >> $OUT_TXT 2>&1
 
 cd /home/azureuser/sycl2023-app
 
