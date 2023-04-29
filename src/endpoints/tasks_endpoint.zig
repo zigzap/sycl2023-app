@@ -2,7 +2,6 @@ const std = @import("std");
 const zap = @import("zap");
 const Tasks = @import("../tasks.zig");
 const Users = @import("../users.zig");
-const Experiments = @import("../experiments.zig");
 const userIdFromQuery = @import("../common.zig").userIdFromQuery;
 
 alloc: std.mem.Allocator = undefined,
@@ -15,18 +14,7 @@ pub const Self = @This();
 
 // not using context / callback functions from mustache. we rather use prepared vars
 pub const RenderContext = struct {
-    experiment_condition: Experiments.ExperimentCondition,
-    textonly: bool,
-    spent_budget: f32,
-    payout: f32,
-    performance_based_payout: f32,
-    has_bonus_payment: bool,
-    bonus_payment_amount: f32,
-    did_not_spend: bool,
-    /// formatted floats
-    payout_fmt: *const [5:0]u8,
-    performance_based_payout_fmt: *const [5:0]u8,
-    bonus_payment_amount_fmt: *const [5:0]u8,
+    // put stuff in there you want to refer in the json template
 };
 
 pub fn init(
@@ -110,17 +98,7 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                             const m = zap.MustacheNew(template) catch return;
                             defer zap.MustacheFree(m);
                             const context: RenderContext = .{
-                                .experiment_condition = Experiments.ExperimentCondition.HumanInfluencer,
-                                .textonly = false,
-                                .spent_budget = 10.0,
-                                .payout = 3.4,
-                                .payout_fmt = " 3.40",
-                                .performance_based_payout = 1.4,
-                                .has_bonus_payment = true,
-                                .bonus_payment_amount = 1.4,
-                                .did_not_spend = false,
-                                .performance_based_payout_fmt = " 1.40",
-                                .bonus_payment_amount_fmt = " 0.40",
+                                // TODO
                             };
                             const rendered = zap.MustacheBuild(m, context);
                             defer rendered.deinit();

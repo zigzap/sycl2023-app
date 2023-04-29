@@ -4,19 +4,12 @@
 //! When a user logs in, you request a new User via `newUser()`. This fails if
 //! all prepared users are already exhausted.
 //!
-//! Each user has an `ExperimentCondition` assigned. It is usually set to the
-//! Experiment's global condition - especially when we do Prolific runs. If
-//! we're fancy, though, we could assing users random Experiment Conditions.
-//!
 //! The pool is realized with a backing array. We can lock-free read from it
 //! because our usage pattern supports non-concurrency per user. When writing
 //! or creating new users (logging in) though, we lock.
 
 const std = @import("std");
 const jutils = @import("jsonutils.zig");
-const Experiments = @import("experiments.zig");
-
-const ExperimentCondition = Experiments.ExperimentCondition;
 
 allocator: std.mem.Allocator = undefined,
 current_user_id: usize = 0,
@@ -64,8 +57,6 @@ pub const User = struct {
     current_task_id: []const u8 = "0",
     /// JSON object for dynamic storage of what the JS frontend wants to put there.
     appstate: ?std.json.Value = null,
-    /// Experiment condition of the user.
-    experiment_condition: ExperimentCondition = .HumanInfluencer,
     /// Panel ID, such as: prolific ID
     panel_id: ?[]const u8 = null,
 

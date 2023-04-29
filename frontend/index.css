@@ -1,4 +1,4 @@
-  @font-face { font-family: "Press Start 2P"; src: url('/frontend/press-start-2p.ttf'); }
+  @font-face { font-family: "Press Start 2P"; src: url('press-start-2p.ttf'); }
 
 html {
   /* https://css-tricks.com/simplified-fluid-typography/ */
