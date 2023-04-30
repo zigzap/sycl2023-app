@@ -87,7 +87,7 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
         if (r.query) |q| {
             if (userIdFromQuery(q)) |uid| {
                 if (!std.mem.eql(u8, uid, "null")) {
-                    std.debug.print("ERROR User ID must be null, got: {s}\n", .{uid});
+                    std.debug.print("    ERROR User ID must be null, got: {s}\n", .{uid});
                     r.sendJson("{\"error\": \"invalid user id\"}") catch return;
                     return;
                 }
@@ -104,7 +104,7 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                             const template = string.items;
                             r.sendJson(template) catch return;
                         } else |err| {
-                            std.debug.print("Error: {}\n", .{err});
+                            std.debug.print("    Error: {}\n", .{err});
                             r.setStatus(.not_found);
                             r.sendJson("{ \"status\": \"not found\"}") catch return;
                         }
@@ -130,7 +130,7 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                     if (self.users.newUser()) |up| {
                         user = up;
                     } else |err| {
-                        std.debug.print("Error: exhausted number of users: {d}\n{any}\n", .{ self.max_users, err });
+                        std.debug.print("    Error: exhausted number of users: {d}\n{any}\n", .{ self.max_users, err });
                         r.setStatus(.internal_server_error);
                         r.sendJson("{ \"status\": \"too many users\"}") catch return;
                         return;
@@ -140,7 +140,7 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                     if (self.users.getUserFromIdString(uid)) |up| {
                         user = up;
                     } else |err| {
-                        std.debug.print("Error: invalid userid {s}\n{any}\n", .{ uid, err });
+                        std.debug.print("    Error: invalid userid {s}\n{any}\n", .{ uid, err });
                         r.setStatus(.internal_server_error);
                         r.sendJson("{ \"status\": \"invalid user id\"}") catch return;
                         return;
@@ -149,37 +149,18 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
 
                 // update the user's appdata based on the received json
                 if (r.body) |body| {
-                    var parser = std.json.Parser.init(self.alloc, true); // copy strings
-                    var maybe_valueTree: ?std.json.ValueTree = parser.parse(body) catch null;
-                    if (maybe_valueTree) |*valueTree| {
-                        defer valueTree.deinit();
-                        switch (valueTree.root) {
-                            .Object => |appdata| {
-                                _ = appdata;
-                                // DEBUG: print appdata
-                                var buf: [100 * 1024]u8 = undefined;
-                                var fba = std.heap.FixedBufferAllocator.init(&buf);
-                                var string = std.ArrayList(u8).init(fba.allocator());
-                                valueTree.root.jsonStringify(.{}, string.writer()) catch unreachable;
-                                std.debug.print("    appdata = {s}\n\n", .{string.items});
-
-                                //
-                                // TODO: iterate over appdata and update user's
-                                // appdata
-                                //
-
-                                // HACK: return list of userid, task
-                                string.writer().print("[ {d}, ", .{user.userid}) catch return;
-                            },
-                            else => {
-                                // unable to parse appdata
-                                std.debug.print("Error: appdata is not an object!", .{});
-                                r.setStatus(.internal_server_error);
-                                r.sendJson("{ \"status\": \"appdata is not an object\"}") catch return;
-                                return;
-                            },
-                        }
+                    if (user.updateAppdataFromJSON(body)) {
+                        // OK
+                    } else |err| {
+                        std.debug.print("    Error cloning appdata: {any}\n", .{err});
+                        return;
                     }
+                    // DEBUG
+                    var buf: [100 * 1024]u8 = undefined;
+                    var fba = std.heap.FixedBufferAllocator.init(&buf);
+                    var string = std.ArrayList(u8).init(fba.allocator());
+                    user.jsonStringify(.{}, string.writer()) catch unreachable;
+                    std.debug.print("    user = {s}\n\n", .{string.items});
                 }
                 if (self.taskIdFromPath(p)) |taskid| {
                     if (self.tasks.json_template.?.root.Object.get(taskid)) |*task| {
@@ -201,12 +182,12 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                             if (rendered.str()) |s| {
                                 r.sendJson(s) catch return;
                             } else {
-                                std.debug.print("Error\n", .{});
+                                std.debug.print("    Error\n", .{});
                                 r.setStatus(.internal_server_error);
                                 r.sendJson("{ \"status\": \"unable to render\"}") catch return;
                             }
                         } else |err| {
-                            std.debug.print("Error: {}\n", .{err});
+                            std.debug.print("    Error: {}\n", .{err});
                             r.setStatus(.not_found);
                             r.sendJson("{ \"status\": \"not found\"}") catch return;
                         }
@@ -233,7 +214,7 @@ fn listTasks(self: *Self, r: zap.SimpleRequest) void {
     if (t.jsonStringify(.{}, string.writer())) {
         r.sendJson(string.items) catch return;
     } else |err| {
-        std.debug.print("/tasks LIST Error: {}\n", .{err});
+        std.debug.print("    /tasks LIST Error: {}\n", .{err});
         r.setStatus(.not_found);
         r.sendJson("{ \"status\": \"not found\"}") catch return;
     }

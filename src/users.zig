@@ -55,14 +55,87 @@ pub const LoginInfo = struct {
 
 /// A single user as constructed by `newUser()`.
 pub const User = struct {
+    allocator: std.mem.Allocator,
     /// unique user id, assigned by `newUser()`.
     userid: usize,
     /// tracks the id of the current task in the experiment
     current_task_id: []const u8 = "0",
     /// JSON object for dynamic storage of what the JS frontend wants to put there.
-    appstate: ?std.json.Value = null,
+    appstate: std.json.Value = undefined,
+    /// we hold on to the parsed appdata updates
+    parsers_to_deinit: std.ArrayList(*std.json.Parser) = undefined,
+    valuetrees_to_deinit: std.ArrayList(*std.json.ValueTree) = undefined,
+
     /// Panel ID, such as: prolific ID
     panel_id: ?[]const u8 = null,
+
+    const Self = @This();
+
+    pub fn init(a: std.mem.Allocator, userid: usize) !User {
+        return .{
+            .allocator = a,
+            .userid = userid,
+            .appstate = std.json.Value{ .Object = std.json.ObjectMap.init(a) },
+            .parsers_to_deinit = try std.ArrayList(*std.json.Parser).initCapacity(a, 10),
+            .valuetrees_to_deinit = try std.ArrayList(*std.json.ValueTree).initCapacity(a, 10),
+        };
+    }
+
+    pub fn deinit(self: *User) void {
+        for (self.parsers_to_deinit.items) |vt| {
+            vt.deinit();
+            self.allocator.destroy(vt);
+        }
+
+        for (self.valuetrees_to_deinit.items, 0..) |vt, i| {
+            std.debug.print("deiniting valuetree {d} {any}\n", .{ i, vt });
+            vt.deinit();
+            std.debug.print("deinitED valuetree {d}\n", .{i});
+            self.allocator.destroy(vt);
+            std.debug.print("destroyed valuetree {d}\n", .{i});
+        }
+
+        self.valuetrees_to_deinit.deinit();
+        self.parsers_to_deinit.deinit();
+        self.appstate.Object.deinit();
+    }
+
+    pub fn updateAppdataFromJSON(self: *User, json: []const u8) !void {
+        var parser = try self.allocator.create(std.json.Parser);
+        parser.* = std.json.Parser.init(self.allocator, true); // copy strings
+
+        // if we can't add to the destroy stack, we need to do so ourselves
+        self.parsers_to_deinit.append(parser) catch |err| {
+            parser.deinit();
+            self.allocator.destroy(parser);
+            return err;
+        };
+
+        var maybe_valueTree: ?std.json.ValueTree = try parser.parse(json);
+
+        if (maybe_valueTree) |valueTree| {
+            var alloced_value_tree = try self.allocator.create(std.json.ValueTree);
+            alloced_value_tree.* = valueTree;
+
+            // if we err out here, we need to destroy the valuetree ourselves
+            self.valuetrees_to_deinit.append(alloced_value_tree) catch |err| {
+                alloced_value_tree.deinit();
+                self.allocator.destroy(alloced_value_tree);
+                return err;
+            };
+
+            switch (alloced_value_tree.*.root) {
+                .Object => |appdata| {
+                    // iterate over appdata and update user's appdata
+                    var it = appdata.iterator();
+                    while (it.next()) |pair| {
+                        try self.appstate.Object.put(pair.key_ptr.*, pair.value_ptr.*);
+                    }
+                },
+                else => return UserError.JsonError,
+            }
+        }
+    }
 
     pub fn jsonStringify(
         self: *const User,
@@ -138,7 +211,14 @@ pub fn deinit(self: *Self) void {
     if (self.json_parsed) |*p| {
         p.deinit();
     }
+    // deinit all users
+    var i: usize = 0;
+    while (i < self.current_user_id) : (i += 1) {
+        std.debug.print("deiniting user {d}\n", .{i});
+        self.users[i].deinit();
+    }
     self.allocator.free(self.users);
+    std.debug.print("deinited all users\n", .{});
 }
 
 /// Thread-safely creating a new user.
@@ -151,10 +231,8 @@ pub fn newUser(self: *Self) !*User {
         return UserError.Insert;
     }
 
-    self.users[self.current_user_id] = .{
-        .userid = self.current_user_id,
-        .appstate = std.json.Value{ .Object = std.json.ObjectMap.init(self.allocator) },
-    };
+    self.users[self.current_user_id] = try User.init(self.allocator, self.current_user_id);
+
     var user = &self.users[self.current_user_id];
 
     // advance id for user to create next
@@ -207,11 +285,20 @@ pub fn jsonStringify(
 }
 
 test "users" {
+    const appdata_json =
+        \\{
+        \\     "x" : {
+        \\         "x": 1,
+        \\         "y": "world"
+        \\     }
+        \\ }
+    ;
     var a = std.testing.allocator;
     var the_users = try init(a, 1);
     defer the_users.deinit();
     var p = try the_users.newUser();
     try std.testing.expect(p.userid == 0);
+    try p.updateAppdataFromJSON(appdata_json);
     try std.testing.expect(the_users.current_user_id == 1);
     var err = the_users.newUser();
     try std.testing.expectError(UserError.Insert, err);
