@@ -195,6 +195,7 @@ pub fn restoreStateFromJson(self: *Self, json: []const u8) !void {
                     return UserError.JsonError;
                 }
                 for (parsed.root.Array.items, 0..) |u, i| {
+                    self.users[i] = try User.init(self.allocator, i);
                     try self.users[i].restoreStateFromJson(u);
                 }
                 self.current_user_id = a.items.len;

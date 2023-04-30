@@ -4,6 +4,10 @@ const TasksEndpoint = @import("endpoints/tasks_endpoint.zig");
 const FrontendEndpoint = @import("endpoints/frontend_endpoint.zig");
 const UsersEndpoint = @import("endpoints/users_endpoint.zig");
 
+const survey_tasks_template = "data/templates/sycl2023-survey.json";
+const users_json_maxsize = 1024 * 50;
+const users_json_filn = "users.json";
+
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{
         .thread_safe = true,
@@ -35,7 +39,7 @@ pub fn main() !void {
         if (TasksEndpoint.init(
             allocator,
             "/sycl-api/tasks", // slug
-            "data/templates/sycl2023-survey.json", // task template
+            survey_tasks_template, // task template
             1000, // max. 1000 users
         )) |ep| {
             break :blk ep;
@@ -48,7 +52,19 @@ pub fn main() !void {
         }
     };
     var frontendEndpoint = try FrontendEndpoint.init("/frontend");
+    var users = tasksEndpoint.getUsers();
     var usersEndpoint = try UsersEndpoint.init(allocator, "/users", tasksEndpoint.getUsers());
+
+    // check if we have a users.json
+    var dir = std.fs.cwd();
+    if (dir.statFile(users_json_filn)) |_| {
+        std.debug.print("\n\nL O A D I N G   E X I S T I N G   users.json\n", .{});
+        const template_buf = try std.fs.cwd().readFileAlloc(allocator, users_json_filn, users_json_maxsize);
+        defer allocator.free(template_buf);
+        try users.restoreStateFromJson(template_buf);
+    } else |_| {
+        // pass
+    }
 
     try listener.addEndpoint(tasksEndpoint.getTaskEndpoint());
     try listener.addEndpoint(frontendEndpoint.getFrontendEndpoint());
