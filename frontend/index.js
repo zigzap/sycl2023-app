@@ -2,12 +2,13 @@ import { show_welcome } from "./screens/welcome_screen.js?version=0";
 import { show_thankyou } from "./screens/thankyou_screen.js?version=0";
 import { show_qscreen } from "./screens/qscreen.js?version=0";
 import { show_cheating } from "./screens/cheatscreen.js?version=0";
-import { loadUserTask, reloadTaskTemplate } from "./api.js?version=0";
+import { loadInitialTask, loadUserTask, reloadTaskTemplate } from "./api.js?version=0";
 import { setCookie, getCookie } from "./cookies.js?version=0";
 
 var eScreen = document.getElementById("screen");
 
 var state = {
+    userid : "null",
     current_task_id : 0,
     task : null,
     iter : 0,
@@ -82,8 +83,13 @@ var utils = {
     },
 };
 
+function cheatSubmit() {
+    loadInitialTask(on_task_loaded);
+}
+
 async function init() {
     state.current_task_id = 0;
+    state.userid = "null";
 
     // TODO: while developing:
     reloadTaskTemplate();
@@ -100,9 +106,9 @@ async function init() {
             },
             next_button: "Yes, I want to cheat!"
         };
-        show_cheating(eScreen, task, load_next_task, utils); 
+        show_cheating(eScreen, task, cheatSubmit, utils); 
     } else {
-        load_next_task();
+        loadInitialTask(on_task_loaded);
     }
     // state.task = load_next_task();
     // if(state.task == null) return;
@@ -130,19 +136,29 @@ function submit() {
     // run();
 }
 
-function load_next_task() {
-    console.log("Taskid is now", state.current_task_id);
-    loadUserTask(1, state.current_task_id, on_task_loaded);
-}
-
-function on_task_loaded(task) {
-    console.log("New task", task);
-    state.task = task;
-    if(state.task == null) return;
+function on_task_loaded(response) {
+    console.log("New task response", response);
+    if (Array.isArray(response)) {
+        state.userid = response[0];
+        console.log("we got a user id", state.userid);
+        state.task = response[1];
+    } else {
+        state.task = response;
+    }
+    if(state.task === null) {
+        console.log("TASK IS NULL");
+        return;
+    }
 
     // if we ever need to update src/data/dummy_data.json:
     // console.log(JSON.stringify(dummy_tasks));
+    console.log("RUNNING IT");
     run();
+}
+
+function load_next_task() {
+    console.log("Taskid is now", state.current_task_id);
+    loadUserTask(state.userid, state.current_task_id, {}, on_task_loaded);
 }
 
 

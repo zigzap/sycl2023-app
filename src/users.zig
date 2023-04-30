@@ -30,8 +30,12 @@ pub const Self = @This();
 const UserError = error{
     /// no prepared user left to create a new user
     Insert,
+    /// getUser with wrong id
+    OutOfBounds,
     /// not implemented
     NotImplemented,
+    /// error parsing the user id
+    IdParseError,
     /// json (de)-serialization error. E.g. userid in JSON does not match the
     /// expected one of the existing user.
     JsonError,
@@ -143,7 +147,7 @@ pub fn newUser(self: *Self) !*User {
     self.lock.lock();
     defer self.lock.unlock();
 
-    if (self.current_user_id + 1 > self.users.len) {
+    if (self.current_user_id >= self.users.len) {
         return UserError.Insert;
     }
 
@@ -153,8 +157,25 @@ pub fn newUser(self: *Self) !*User {
     };
     var user = &self.users[self.current_user_id];
 
+    // advance id for user to create next
     self.current_user_id += 1;
     return user;
+}
+
+pub fn getUser(self: *Self, id: usize) !*User {
+    if (id >= self.current_user_id or id >= self.users.len) {
+        return UserError.OutOfBounds;
+    }
+    // assert id >= 1 <= self.users.len
+    return &self.users[id]; // we return user 0 for id 1
+}
+
+pub fn getUserFromIdString(self: *Self, id: []const u8) !*User {
+    if (std.fmt.parseUnsigned(usize, id, 10)) |user_id| {
+        return self.getUser(user_id);
+    } else |_| {
+        return UserError.IdParseError;
+    }
 }
 
 pub fn jsonStringify(

@@ -2,16 +2,12 @@ const std = @import("std");
 const zap = @import("zap");
 const TasksEndpoint = @import("endpoints/tasks_endpoint.zig");
 const FrontendEndpoint = @import("endpoints/frontend_endpoint.zig");
-const Users = @import("users.zig");
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{
         .thread_safe = true,
     }){};
     var allocator = gpa.allocator();
-
-    var users = try Users.init(allocator, 500);
-    _ = users;
 
     zap.Log.fio_set_log_level(zap.Log.fio_log_level_debug);
     std.debug.print(
@@ -35,7 +31,12 @@ pub fn main() !void {
 
     // add endpoints
     var tasksEndpoint = blk: {
-        if (TasksEndpoint.init(allocator, "/sycl-api/tasks", "data/templates/sycl2023-survey.json")) |ep| {
+        if (TasksEndpoint.init(
+            allocator,
+            "/sycl-api/tasks", // slug
+            "data/templates/sycl2023-survey.json", // task template
+            1000, // max. 1000 users
+        )) |ep| {
             break :blk ep;
         } else |err| {
             switch (err) {
