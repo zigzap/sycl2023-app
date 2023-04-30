@@ -55,15 +55,24 @@ pub fn main() !void {
     var users = tasksEndpoint.getUsers();
     var usersEndpoint = try UsersEndpoint.init(allocator, "/users", tasksEndpoint.getUsers());
 
+    var args = std.process.args();
+    var do_load = false;
+    while (args.next()) |arg| {
+        if (std.mem.eql(u8, arg, "reload")) {
+            do_load = true;
+        }
+    }
     // check if we have a users.json
-    var dir = std.fs.cwd();
-    if (dir.statFile(users_json_filn)) |_| {
-        std.debug.print("\n\nL O A D I N G   E X I S T I N G   users.json\n", .{});
-        const template_buf = try std.fs.cwd().readFileAlloc(allocator, users_json_filn, users_json_maxsize);
-        defer allocator.free(template_buf);
-        try users.restoreStateFromJson(template_buf);
-    } else |_| {
-        // pass
+    if (do_load) {
+        var dir = std.fs.cwd();
+        if (dir.statFile(users_json_filn)) |_| {
+            std.debug.print("\n\nL O A D I N G   E X I S T I N G   " ++ users_json_filn ++ "\n", .{});
+            const template_buf = try std.fs.cwd().readFileAlloc(allocator, users_json_filn, users_json_maxsize);
+            defer allocator.free(template_buf);
+            try users.restoreStateFromJson(template_buf);
+        } else |err| {
+            std.debug.print("ERROR loading " ++ users_json_filn ++ ": {any}\n", .{err});
+        }
     }
 
     try listener.addEndpoint(tasksEndpoint.getTaskEndpoint());
