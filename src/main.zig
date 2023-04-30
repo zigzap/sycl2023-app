@@ -53,7 +53,7 @@ pub fn main() !void {
     };
     var frontendEndpoint = try FrontendEndpoint.init("/frontend");
     var users = tasksEndpoint.getUsers();
-    var usersEndpoint = try UsersEndpoint.init(allocator, "/users", tasksEndpoint.getUsers());
+    var usersEndpoint = try UsersEndpoint.init(allocator, "/sycl-api/users", tasksEndpoint.getUsers());
 
     var args = std.process.args();
     var do_load = false;
