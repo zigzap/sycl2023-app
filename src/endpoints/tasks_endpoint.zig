@@ -42,6 +42,10 @@ pub fn init(
     return ret;
 }
 
+pub fn getUsers(self: *Self) *Users {
+    return &self.users;
+}
+
 pub fn getTasks(self: *Self) *Tasks {
     return &self.tasks;
 }
@@ -59,15 +63,6 @@ fn taskIdFromPath(self: *Self, path: []const u8) ?[]const u8 {
         return idstr;
     }
     return null;
-}
-
-// get user
-// get task
-// TODO : mustache it
-pub fn renderUserTask(self: *Self, userid: usize, writer: anytype) !void {
-    _ = self;
-    _ = userid;
-    _ = writer;
 }
 
 fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
@@ -104,7 +99,7 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                             const template = string.items;
                             r.sendJson(template) catch return;
                         } else |err| {
-                            std.debug.print("    Error: {}\n", .{err});
+                            std.debug.print("    Error: {any}\n", .{err});
                             r.setStatus(.not_found);
                             r.sendJson("{ \"status\": \"not found\"}") catch return;
                         }
@@ -187,7 +182,7 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                                 r.sendJson("{ \"status\": \"unable to render\"}") catch return;
                             }
                         } else |err| {
-                            std.debug.print("    Error: {}\n", .{err});
+                            std.debug.print("    Error: {any}\n", .{err});
                             r.setStatus(.not_found);
                             r.sendJson("{ \"status\": \"not found\"}") catch return;
                         }
@@ -214,7 +209,7 @@ fn listTasks(self: *Self, r: zap.SimpleRequest) void {
     if (t.jsonStringify(.{}, string.writer())) {
         r.sendJson(string.items) catch return;
     } else |err| {
-        std.debug.print("    /tasks LIST Error: {}\n", .{err});
+        std.debug.print("    /tasks LIST Error: {any}\n", .{err});
         r.setStatus(.not_found);
         r.sendJson("{ \"status\": \"not found\"}") catch return;
     }

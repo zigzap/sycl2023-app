@@ -2,6 +2,7 @@ const std = @import("std");
 const zap = @import("zap");
 const TasksEndpoint = @import("endpoints/tasks_endpoint.zig");
 const FrontendEndpoint = @import("endpoints/frontend_endpoint.zig");
+const UsersEndpoint = @import("endpoints/users_endpoint.zig");
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{
@@ -47,9 +48,11 @@ pub fn main() !void {
         }
     };
     var frontendEndpoint = try FrontendEndpoint.init("/frontend");
+    var usersEndpoint = try UsersEndpoint.init(allocator, "/users", tasksEndpoint.getUsers());
 
     try listener.addEndpoint(tasksEndpoint.getTaskEndpoint());
     try listener.addEndpoint(frontendEndpoint.getFrontendEndpoint());
+    try listener.addEndpoint(usersEndpoint.getUsersEndpoint());
 
     try listener.listen();
     // start worker threads

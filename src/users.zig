@@ -42,6 +42,7 @@ const UserError = error{
 };
 
 /// General info for /login
+/// TODO: unused in sycl app
 pub const LoginInfo = struct {
     /// Unix time the user landed here with a panel id
     servertime_login: usize,
