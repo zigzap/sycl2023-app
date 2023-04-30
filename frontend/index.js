@@ -15,6 +15,10 @@ var state = {
 };
 
 var utils = {
+    isoTimeStamp : function() {
+        return new Date().toISOString().replace("T", " ").replace("Z", "");
+    },
+
     shuffleArray : function(array) {
       if(array.length == 1)
         return;
@@ -120,7 +124,7 @@ async function init() {
 
 init();
 
-function submit() {
+function submit(appdata) {
     // post update to server and get next task
     setCookie("SYCL2023", "agreed", 3);
     let next = state.task.next_task;
@@ -130,7 +134,7 @@ function submit() {
     if (final === true || next === null || next === undefined) return;
 
     state.current_task_id = next;
-    load_next_task();
+    load_next_task(appdata);
     // state.task = load_next_task()
     // if(state.task == null) return;
     // run();
@@ -156,9 +160,9 @@ function on_task_loaded(response) {
     run();
 }
 
-function load_next_task() {
+function load_next_task(appdata) {
     console.log("Taskid is now", state.current_task_id);
-    loadUserTask(state.userid, state.current_task_id, {}, on_task_loaded);
+    loadUserTask(state.userid, state.current_task_id, appdata, on_task_loaded);
 }
 
 

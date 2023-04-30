@@ -2,6 +2,8 @@ export function show_welcome(screen, task, submit, utils) {
     utils.make_basic_screen(screen, task);
     screen.classList.add("welcome_screen");
 
+    let appdata = {};
+
     // if necessary, will be added later
     let toast = document.createElement("DIV");
     toast.classList.add("toast");
@@ -67,10 +69,12 @@ export function show_welcome(screen, task, submit, utils) {
             lbl_agr.onclick = function() {
                 chk_agr.checked = !chk_agr.checked;
                 _agreementChecked = chk_agr.checked;
+                appdata.agreement_checked_at = utils.isoTimeStamp();
             }
 
             chk_agr.onclick = function() {
                 _agreementChecked = chk_agr.checked;
+                appdata.agreement_checked_at = utils.isoTimeStamp();
             }
 
             agr_row.appendChild(chk_agr);
@@ -91,10 +95,12 @@ export function show_welcome(screen, task, submit, utils) {
             lbl_dschutz.onclick = function() {
                 chk_dschutz.checked = !chk_dschutz.checked;
                 _datenschutzChecked = chk_dschutz.checked;
+                appdata.dataprotection_checked_at = utils.isoTimeStamp();
             }
 
             chk_dschutz.onclick = function() {
                 _datenschutzChecked = chk_dschutz.checked;
+                appdata.dataprotection_checked_at = utils.isoTimeStamp();
             }
 
             dschutz_row.appendChild(chk_dschutz);
@@ -124,7 +130,7 @@ export function show_welcome(screen, task, submit, utils) {
             }
         }
 
-        submit();
+        submit(appdata);
     }
 
     if(_showBottom) {

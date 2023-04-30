@@ -163,6 +163,11 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                                 valueTree.root.jsonStringify(.{}, string.writer()) catch unreachable;
                                 std.debug.print("    appdata = {s}\n\n", .{string.items});
 
+                                //
+                                // TODO: iterate over appdata and update user's
+                                // appdata
+                                //
+
                                 // HACK: return list of userid, task
                                 string.writer().print("[ {d}, ", .{user.userid}) catch return;
                             },

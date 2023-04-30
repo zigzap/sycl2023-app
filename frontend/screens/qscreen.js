@@ -8,6 +8,8 @@ export function show_qscreen(screen, task, submit, utils) {
     let _markdownBody;
     let _msgPleaseAnswer = "";
 
+    let appdata = {};
+
     function showQ(qid, json) {
         let qtext = json.Question;
         let qtype = json.QType;
@@ -233,7 +235,7 @@ export function show_qscreen(screen, task, submit, utils) {
             return;
         }
 
-        submit();
+        submit(_answers);
     }
 
     _taskBody = task.taskbody;
@@ -266,7 +268,6 @@ export function show_qscreen(screen, task, submit, utils) {
     if(_markdownBody) {
         utils.show_markdown_body(screen, task, "#### " + _markdownBody);
     }
-    console.log(_qidlist);
     for (const qid of _qidlist) {
         let el = showQ(qid, _taskBody['questions'][qid]);
         screen.appendChild(el);
