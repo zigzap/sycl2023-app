@@ -89,7 +89,11 @@ html {
     padding: 1em;
 }
 
-.qscreen {
+.q_screen {
+    padding: 1em;
+}
+
+.thankyou_screen {
     padding: 1em;
 }
 
@@ -111,19 +115,71 @@ html {
 }
 
 
-.welcome_screen .row {
-    display: flex;
-    align-items: center;
+
+.welcome_screen {
+    .row {
+        display: flex;
+        align-items: center;
+    }
+
+    .checkbox {
+        padding-left: 20px;
+    }
+
+    label {
+        padding-left: 20px;
+    }
+
+    /* the background of the label in the checkboxrow */
+    .checkboxrow {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+
+
+    /* the text of the label in the checkboxrow */
+    label:hover {
+        color: #fd495d;
+    }
+}
+/* don't know why this doesn't work within .welcome_screen */
+    .hoverrow{
+        background: #282a2b;
+    }
+
+/*maybe*/
+.q_screen 
+    .checkbox {
+        padding-left: 20px;
+    }
+
+    label {
+        padding-left: 20px;
+    }
+
+    /* the background of the label in the checkboxrow */
+    .checkboxrow {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+
+    label:hover {
+        color: yellow;
+    }
+
+    .item_selected {
+        color: #fd495d;
+        color: yellow;
+    }
 }
 
-.welcome_screen .checkbox {
-    padding-left: 20px;
+.hoverrow{
+    background: #282a2b;
 }
 
-.welcome_screen label {
-    padding-left: 20px;
-}
-
+/* .welcome_screen  */
 .welcome_screen img {
     width: 100%;
 }

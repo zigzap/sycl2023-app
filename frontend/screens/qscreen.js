@@ -95,6 +95,17 @@ export function show_qscreen(screen, task, submit, utils) {
                 let radio = document.getElementById(option);
                 console.log("clicked", option);
                 radio.checked = true;
+
+                // first, unhighlight potential previous selected item
+                let prevs = document.getElementsByClassName("item_selected");
+                for(let elem of prevs) {
+                    // if(elem != rlabel) 
+                    elem.classList.remove("item_selected");
+                }
+
+                // then, select the new one
+                rlabel.classList.add("item_selected");
+                console.log("item_selected", rlabel);
                 _groupvalue = option;
                 _onAnswer(qid, _groupvalue);
             };

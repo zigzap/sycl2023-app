@@ -42,6 +42,9 @@ var utils = {
     make_basic_screen: function(screen, task) {
         console.log("utils.make_basic_screen:", task.tasktype);
         window.scrollTo(0,0);
+        screen.classList.remove("welcome_screen");
+        screen.classList.remove("q_screen");
+        screen.classList.remove("thankyou_screen");
     },
 
     make_next_button: function (screen, task, submit_fn) {

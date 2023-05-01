@@ -59,12 +59,23 @@ export function show_welcome(screen, task, submit, utils) {
         if(_hasAgreement) {
             let agr_row = document.createElement("div");
             agr_row.classList.add("row");
+            agr_row.classList.add("checkboxrow");
             let lbl_agr = document.createElement("LABEL");
             lbl_agr.classList.add("agreement_check");
             lbl_agr.innerHTML = task.taskbody.agreement_check_caption;
             let chk_agr = document.createElement("INPUT");
             chk_agr.type = "checkbox";
             chk_agr.classList.add("checkbox");
+
+            lbl_agr.addEventListener("mouseenter", () => { 
+                console.log("enter");
+                agr_row.classList.add("hoverrow"); 
+            });
+
+            lbl_agr.addEventListener("mouseleave", () => { 
+                console.log("leave");
+                agr_row.classList.remove("hoverrow"); 
+            });
 
             lbl_agr.onclick = function() {
                 chk_agr.checked = !chk_agr.checked;
@@ -85,12 +96,21 @@ export function show_welcome(screen, task, submit, utils) {
         if(_hasDatenschutz) {
             let dschutz_row = document.createElement("div");
             dschutz_row.classList.add("row");
+            dschutz_row.classList.add("checkboxrow");
             let lbl_dschutz = document.createElement("LABEL");
             lbl_dschutz.classList.add("data_protection");
             lbl_dschutz.innerHTML = task.taskbody.data_protection_check_caption;
             let chk_dschutz = document.createElement("INPUT");
             chk_dschutz.type = "checkbox";
             chk_dschutz.classList.add("checkbox");
+
+            lbl_dschutz.addEventListener("mouseenter", () => { 
+                dschutz_row.classList.add("hoverrow"); 
+            });
+
+            lbl_dschutz.addEventListener("mouseleave", () =>{ 
+                dschutz_row.classList.remove("hoverrow"); 
+            });
 
             lbl_dschutz.onclick = function() {
                 chk_dschutz.checked = !chk_dschutz.checked;
