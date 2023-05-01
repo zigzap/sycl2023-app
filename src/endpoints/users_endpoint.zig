@@ -20,12 +20,19 @@ pub fn init(a: std.mem.Allocator, users_path: []const u8, users: *Users) !Self {
             .post = null,
             .put = null,
             .delete = null,
+            .unauthorized = unauthorized,
         }),
     };
 }
 
 pub fn getUsersEndpoint(self: *Self) *zap.SimpleEndpoint {
     return &self.endpoint;
+}
+
+fn unauthorized(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
+    _ = r;
+    _ = e;
+    std.debug.print("UNAUTHORIZED\n", .{});
 }
 
 // shouldn't we just return which user is in which task?

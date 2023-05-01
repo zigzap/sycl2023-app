@@ -3,6 +3,7 @@ const zap = @import("zap");
 const TasksEndpoint = @import("endpoints/tasks_endpoint.zig");
 const FrontendEndpoint = @import("endpoints/frontend_endpoint.zig");
 const UsersEndpoint = @import("endpoints/users_endpoint.zig");
+const PWAuthenticator = @import("pwauth.zig");
 
 const survey_tasks_template = "data/templates/sycl2023-survey.json";
 const users_json_maxsize = 1024 * 50;
@@ -13,6 +14,17 @@ pub fn main() !void {
         .thread_safe = true,
     }){};
     var allocator = gpa.allocator();
+
+    // first, create the UserPassword Authenticator from the passwords file
+    const pw_filn = "passwords.txt";
+    var pw_authenticator = PWAuthenticator.init(allocator, pw_filn) catch |err| {
+        std.debug.print(
+            "ERROR: Could not read " ++ pw_filn ++ ": {any}\n",
+            .{err},
+        );
+        return;
+    };
+    defer pw_authenticator.deinit();
 
     zap.Log.fio_set_log_level(zap.Log.fio_log_level_debug);
     std.debug.print(
@@ -54,6 +66,8 @@ pub fn main() !void {
     var frontendEndpoint = try FrontendEndpoint.init("/frontend");
     var users = tasksEndpoint.getUsers();
     var usersEndpoint = try UsersEndpoint.init(allocator, "/sycl-api/users", tasksEndpoint.getUsers());
+    const PWAuthenticatingEndpoint = zap.AuthenticatingEndpoint(PWAuthenticator.Authenticator);
+    var pw_auth_endpoint = PWAuthenticatingEndpoint.init(usersEndpoint.getUsersEndpoint(), &pw_authenticator.authenticator);
 
     var args = std.process.args();
     var do_load = false;
@@ -77,9 +91,10 @@ pub fn main() !void {
 
     try listener.addEndpoint(tasksEndpoint.getTaskEndpoint());
     try listener.addEndpoint(frontendEndpoint.getFrontendEndpoint());
-    try listener.addEndpoint(usersEndpoint.getUsersEndpoint());
+    try listener.addEndpoint(pw_auth_endpoint.getEndpoint());
 
     try listener.listen();
+    zap.enableDebugLog();
     // start worker threads
     zap.start(.{
         .threads = 4,
