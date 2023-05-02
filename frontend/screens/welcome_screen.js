@@ -68,12 +68,10 @@ export function show_welcome(screen, task, submit, utils) {
             chk_agr.classList.add("checkbox");
 
             lbl_agr.addEventListener("mouseenter", () => { 
-                console.log("enter");
                 agr_row.classList.add("hoverrow"); 
             });
 
             lbl_agr.addEventListener("mouseleave", () => { 
-                console.log("leave");
                 agr_row.classList.remove("hoverrow"); 
             });
 

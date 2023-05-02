@@ -41,6 +41,8 @@ var utils = {
 
     make_basic_screen: function(screen, task) {
         console.log("utils.make_basic_screen:", task.tasktype);
+        document.getElementById("loader").style.display = "none";
+        document.getElementById("screen").style.display = "block";
         window.scrollTo(0,0);
         screen.classList.remove("welcome_screen");
         screen.classList.remove("q_screen");
@@ -57,6 +59,8 @@ var utils = {
         b = document.createElement("BUTTON");
         b.innerHTML = task.next_button;
         b.classList.add("nextbutton");
+        // setting ID does not seem to work
+        // so we will have to access the button later via class
 
         if(!submit_fn) {
             b.onclick = function() {
@@ -164,7 +168,8 @@ function submit(appdata) {
     // if we're fancy, we could display a loading animation here. this
     // is necessary if load times increase when the server is under high
     // load, our connection is crappy, etc.
-
+    //
+    // we'll do the disappearing business in load_next_task().
     load_next_task(appdata);
 }
 
@@ -190,6 +195,19 @@ function on_task_loaded(response) {
 
 function load_next_task(appdata) {
     console.log("Taskid is now", state.current_task_id);
+    // make the button disappear immediately so we can't press it twice
+    // if we're fancy, we could display a loading animation here. this
+    // is necessary if load times increase when the server is under high
+    // load, our connection is crappy, etc.
+
+    // TODO: does not work, is null
+    let buttons = document.getElementsByClassName("nextbutton");
+    for(let button of buttons) {
+        console.log("button is" , button);
+        button.style.display = "none";
+    }
+    document.getElementById("screen").style.display = "none";
+    document.getElementById("loader").style.display = "block";
     loadUserTask(state.userid, state.current_task_id, appdata, on_task_loaded);
 }
 

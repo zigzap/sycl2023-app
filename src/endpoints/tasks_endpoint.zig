@@ -175,6 +175,7 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                             const rendered = zap.MustacheBuild(m, context);
                             defer rendered.deinit();
                             if (rendered.str()) |s| {
+                                // std.time.sleep(2 * std.time.ns_per_s);
                                 r.sendJson(s) catch return;
                             } else {
                                 std.debug.print("    Error\n", .{});

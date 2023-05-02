@@ -19,6 +19,14 @@ html {
     text-color: white;
 }
 
+.loader_container {
+    display: "none";
+    text-align: center;
+    /* color: #4ccaf4; */
+    color: grey;
+    padding: 20px;
+}
+
 /* How to - Overlay  */
 /* from https://www.w3schools.com/howto/howto_css_overlay.asp */
 .overlay {
@@ -388,4 +396,27 @@ html {
 @keyframes fadeout {
   from {bottom: 30px; opacity: 1;}
   to {bottom: 0; opacity: 0;}
+}
+
+/* LOADER */
+.loader {
+  border: 16px solid #909090;
+  border-radius: 50%;
+  border-top: 16px solid magenta;
+  width: 60px;
+  height: 60px;
+  margin: auto;
+  -webkit-animation: spin 0.5s linear infinite; /* Safari */
+  animation: spin 0.5s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
