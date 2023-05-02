@@ -57,12 +57,28 @@ var utils = {
         b = document.createElement("BUTTON");
         b.innerHTML = task.next_button;
         b.classList.add("nextbutton");
+
         if(!submit_fn) {
             b.onclick = function() {
-                submit();
+                // we didn't get a submit function passed in
+                // so we need to call our final submit function directly
+                // however, it accepts an appdata object. we have no
+                // choice but to send an empty one.
+                // Note, that in this codebase, the function call below
+                // is never executed. It's an error, if it is. Exactly
+                // because of the appdata sending business.
+                // So, the way it works, is: The passed in submit_fn
+                // points to the pre_submit() function of the screen.
+                // Here, validation checks are done, e.g. are all Qs
+                // answered, etc. Only if it's OK to really submit, the
+                // real submit function, that was passed in to the
+                // screen, is called from within the individual pre_submit
+                // function of the screen.
+                submit({});
             }
         } else {
             b.onclick = function() {
+                // usually calls back into the screen's pre_submit()
                 submit_fn();
             }
         }
@@ -99,7 +115,19 @@ async function init() {
     state.userid = "null";
 
     // TODO: while developing:
+    //
+    // DANGER: make sure to disable this reloading in production or else
+    // every new user will trigger reloading. 
+    //
+    // THIS CAN LEAD TO RACE CONDITIONS with potential crashes as the
+    // result: the task json template is not mutex protected so we don't
+    // content on it for every single task render. If the json template
+    // is freed mid-rendering, this is bound to cause a crash!
+    //
+    // maybe, indicate this visually somehow - maybe with the
+    // snackbar?
     reloadTaskTemplate();
+    utils.showToast("Task template reloaded. Disable this before going into production!");
 
     let cookie = getCookie("SYCL2023");
 
@@ -117,12 +145,6 @@ async function init() {
     } else {
         loadInitialTask(on_task_loaded);
     }
-    // state.task = load_next_task();
-    // if(state.task == null) return;
-    //
-    // // if we ever need to update src/data/dummy_data.json:
-    // // console.log(JSON.stringify(dummy_tasks));
-    // run();
 }
 
 init();
@@ -137,10 +159,13 @@ function submit(appdata) {
     if (final === true || next === null || next === undefined) return;
 
     state.current_task_id = next;
+
+    // make the button disappear immediately so we can't press it twice
+    // if we're fancy, we could display a loading animation here. this
+    // is necessary if load times increase when the server is under high
+    // load, our connection is crappy, etc.
+
     load_next_task(appdata);
-    // state.task = load_next_task()
-    // if(state.task == null) return;
-    // run();
 }
 
 function on_task_loaded(response) {
