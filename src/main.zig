@@ -83,7 +83,9 @@ pub fn main() !void {
             std.debug.print("\n\nL O A D I N G   E X I S T I N G   " ++ users_json_filn ++ "\n", .{});
             const template_buf = try std.fs.cwd().readFileAlloc(allocator, users_json_filn, users_json_maxsize);
             defer allocator.free(template_buf);
-            try users.restoreStateFromJson(template_buf);
+            if (template_buf.len > 0) {
+                try users.restoreStateFromJson(template_buf);
+            }
         } else |err| {
             std.debug.print("ERROR loading " ++ users_json_filn ++ ": {any}\n", .{err});
         }
