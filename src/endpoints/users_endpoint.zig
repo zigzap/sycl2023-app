@@ -66,6 +66,19 @@ fn listOrSaveUsers(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                 r.setStatus(.not_found);
                 r.sendJson("{ \"status\": \"not found\"}") catch return;
             }
+        } else if (std.mem.endsWith(u8, path, "/count")) {
+            var buf: [128]u8 = undefined;
+            if (std.fmt.bufPrint(&buf,
+                \\ {{
+                \\    "count" : {d}
+                \\ }}
+            , .{self.users.current_user_id})) |json| {
+                r.sendJson(json) catch return;
+            } else |err| {
+                std.debug.print("    /users/count error: {any}\n", .{err});
+                r.setStatus(.not_found);
+                r.sendJson("{ \"status\": \"not found\"}") catch return;
+            }
         }
     }
     r.setStatus(.not_found);
