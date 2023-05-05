@@ -13,7 +13,7 @@ pub fn build(b: *std.Build) void {
     });
 
     const exe = b.addExecutable(.{
-        .name = "zap-endpoint-tests",
+        .name = "sycl2023app",
         .root_source_file = .{ .path = "src/main.zig" },
         .target = target,
         .optimize = optimize,
