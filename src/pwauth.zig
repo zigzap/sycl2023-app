@@ -1,21 +1,29 @@
 const std = @import("std");
 const zap = @import("zap");
-const Map = std.StringHashMap([]const u8);
+const Lookup = std.StringHashMap([]const u8);
 
-pub const Authenticator = zap.BasicAuth(Map, .UserPass);
+const auth_lock_token_table = false;
+const auth_lock_pw_table = false;
+
+// see the source for more info
+pub const Authenticator = zap.UserPassSessionAuth(
+    Lookup,
+    auth_lock_pw_table, // we may set this to true if we expect our username -> password map to change
+    auth_lock_token_table, // we may set this to true to have session tokens deleted server-side on logout
+);
 
 const MaxFileSize = 10 * 1024;
 
 allocator: std.mem.Allocator,
-map: *Map,
+map: *Lookup,
 authenticator: Authenticator,
 contents: []const u8,
 
 const Self = @This();
 
-pub fn init(allocator: std.mem.Allocator, pwfile: []const u8) !Self {
-    var map = try allocator.create(Map);
-    map.* = Map.init(allocator);
+pub fn init(allocator: std.mem.Allocator, pwfile: []const u8, loginpagepath: []const u8) !Self {
+    var map = try allocator.create(Lookup);
+    map.* = Lookup.init(allocator);
 
     const contents = try std.fs.cwd().readFileAlloc(allocator, pwfile, MaxFileSize);
     var it = std.mem.split(u8, contents, "\n");
@@ -31,7 +39,16 @@ pub fn init(allocator: std.mem.Allocator, pwfile: []const u8) !Self {
     return .{
         .allocator = allocator,
         .map = map,
-        .authenticator = try Authenticator.init(allocator, map, null),
+        .authenticator = try Authenticator.init(
+            allocator,
+            map,
+            .{
+                .usernameParam = "username",
+                .passwordParam = "password",
+                .loginPage = loginpagepath,
+                .cookieName = "zap-session",
+            },
+        ),
         .contents = contents,
     };
 }

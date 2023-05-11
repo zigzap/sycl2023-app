@@ -17,7 +17,7 @@ pub fn main() !void {
 
     // first, create the UserPassword Authenticator from the passwords file
     const pw_filn = "passwords.txt";
-    var pw_authenticator = PWAuthenticator.init(allocator, pw_filn) catch |err| {
+    var pw_authenticator = PWAuthenticator.init(allocator, pw_filn, "/login") catch |err| {
         std.debug.print(
             "ERROR: Could not read " ++ pw_filn ++ ": {any}\n",
             .{err},

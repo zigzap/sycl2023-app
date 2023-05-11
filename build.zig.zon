@@ -3,10 +3,10 @@
     .version = "0.0.1",
 
     .dependencies = .{
-        // zap release-0.0.13
+        // zap release-0.0.18
         .zap = .{
-            .url = "https://github.com/zigzap/zap/archive/refs/tags/release-0.0.13.tar.gz",
-            .hash = "1220c4c26d3ed0a6e27ff15d6165cfc648f6209b381e0e6ac06c02f68cf54a4c9fe4",
+            .url = "https://github.com/zigzap/zap/archive/refs/tags/release-0.0.18.tar.gz",
+            .hash = "12202080c00d04324721ea58a5120031109165177e89c5612edc74494f2d119b2a78",
         }
     }
 }
