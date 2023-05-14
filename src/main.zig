@@ -17,7 +17,11 @@ pub fn main() !void {
 
     // first, create the UserPassword Authenticator from the passwords file
     const pw_filn = "passwords.txt";
-    var pw_authenticator = PWAuthenticator.init(allocator, pw_filn, "/login") catch |err| {
+    var pw_authenticator = PWAuthenticator.init(
+        allocator,
+        pw_filn,
+        "/login",
+    ) catch |err| {
         std.debug.print(
             "ERROR: Could not read " ++ pw_filn ++ ": {any}\n",
             .{err},
@@ -46,7 +50,9 @@ pub fn main() !void {
         .log = true,
     });
 
-    // add endpoints
+    //
+    // /SYCL-API/TASKS
+    //
     var tasksEndpoint = blk: {
         if (TasksEndpoint.init(
             allocator,
@@ -63,9 +69,26 @@ pub fn main() !void {
             return;
         }
     };
-    var frontendEndpoint = try FrontendEndpoint.init("/frontend");
+
+    //
+    // /FRONTEND
+    //
+    var frontendEndpoint = try FrontendEndpoint.init(.{
+        .allocator = allocator,
+        .www_root = ".",
+        .endpoint_path = "/frontend",
+        .index_html = "/frontend/index.html",
+    });
+
+    //
+    // /SYCL-API/USERS
+    //
     var users = tasksEndpoint.getUsers();
-    var usersEndpoint = try UsersEndpoint.init(allocator, "/sycl-api/users", tasksEndpoint.getUsers());
+    var usersEndpoint = try UsersEndpoint.init(
+        allocator,
+        "/sycl-api/users",
+        tasksEndpoint.getUsers(),
+    );
     const PWAuthenticatingEndpoint = zap.AuthenticatingEndpoint(PWAuthenticator.Authenticator);
     var pw_auth_endpoint = PWAuthenticatingEndpoint.init(usersEndpoint.getUsersEndpoint(), &pw_authenticator.authenticator);
 
