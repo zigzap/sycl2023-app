@@ -76,7 +76,7 @@ pub const User = struct {
         return .{
             .allocator = a,
             .userid = userid,
-            .appstate = std.json.Value{ .Object = std.json.ObjectMap.init(a) },
+            .appstate = std.json.Value{ .object = std.json.ObjectMap.init(a) },
             .parsers_to_deinit = try std.ArrayList(*std.json.Parser).initCapacity(a, 10),
             .valuetrees_to_deinit = try std.ArrayList(*std.json.ValueTree).initCapacity(a, 10),
         };
@@ -103,7 +103,7 @@ pub const User = struct {
 
     pub fn updateAppdataFromJSON(self: *User, json: []const u8) !void {
         var parser = try self.allocator.create(std.json.Parser);
-        parser.* = std.json.Parser.init(self.allocator, true); // copy strings
+        parser.* = std.json.Parser.init(self.allocator, .alloc_always); // copy strings
 
         // if we can't add to the destroy stack, we need to do so ourselves
         self.parsers_to_deinit.append(parser) catch |err| {
@@ -126,11 +126,11 @@ pub const User = struct {
             };
 
             switch (alloced_value_tree.*.root) {
-                .Object => |appdata| {
+                .object => |appdata| {
                     // iterate over appdata and update user's appdata
                     var it = appdata.iterator();
                     while (it.next()) |pair| {
-                        try self.appstate.Object.put(pair.key_ptr.*, pair.value_ptr.*);
+                        try self.appstate.object.put(pair.key_ptr.*, pair.value_ptr.*);
                     }
                 },
                 else => return UserError.JsonError,
@@ -154,7 +154,7 @@ pub const User = struct {
     /// overwrite / initialize this user's state by what JSON says (load from disk)
     pub fn restoreStateFromJson(self: *User, j: std.json.Value) !void {
         switch (j) {
-            .Object => |_| {
+            .object => |_| {
                 const loaded_userid = try jutils.getJsonUsizeValue(j, "userid");
                 self.userid = loaded_userid;
                 // todo: we could dupe() the string
@@ -182,19 +182,19 @@ pub fn init(a: std.mem.Allocator, prepareHowMany: usize) !Self {
 /// the pool must be already created at this time.
 pub fn restoreStateFromJson(self: *Self, json: []const u8) !void {
     // parser needs to copy strings as the json text is likely to be freed after parsing
-    self.json_parser = std.json.Parser.init(self.allocator, true);
+    self.json_parser = std.json.Parser.init(self.allocator, .alloc_always);
     self.json_parsed = try self.json_parser.?.parse(json);
 
     // json_parsed is supposed to be an array
     if (self.json_parsed) |parsed| {
         switch (parsed.root) {
-            .Array => |a| {
+            .array => |a| {
                 // do the actual parsing
                 const l = a.items.len;
                 if (l > self.users.len) {
                     return UserError.JsonError;
                 }
-                for (parsed.root.Array.items, 0..) |u, i| {
+                for (parsed.root.array.items, 0..) |u, i| {
                     self.users[i] = try User.init(self.allocator, i);
                     try self.users[i].restoreStateFromJson(u);
                 }
@@ -265,21 +265,21 @@ pub fn jsonStringify(
 ) @TypeOf(out_stream).Error!void {
     try out_stream.writeByte('[');
     var child_options = options;
-    if (child_options.whitespace) |*whitespace| {
-        whitespace.indent_level += 1;
+    if (child_options.whitespace.indent != .none) {
+        child_options.whitespace.indent_level += 1;
     }
     for (0..self.current_user_id) |i| {
         if (i != 0) {
             try out_stream.writeByte(',');
         }
-        if (child_options.whitespace) |child_whitespace| {
-            try child_whitespace.outputIndent(out_stream);
+        if (child_options.whitespace.indent != .none) {
+            try child_options.whitespace.outputIndent(out_stream);
         }
         try self.users[i].jsonStringify(child_options, out_stream);
     }
     if (self.current_user_id != 0) {
-        if (options.whitespace) |whitespace| {
-            try whitespace.outputIndent(out_stream);
+        if (options.whitespace.indent != .none) {
+            try options.whitespace.outputIndent(out_stream);
         }
     }
     try out_stream.writeByte(']');

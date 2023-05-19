@@ -13,9 +13,33 @@
     },
     "next_button": "Continue",
     "next_button_hide": false,
-    "next_task": 200,
+    "next_task": 150,
     "ok_next_task": 200,
     "skip": false
+  },
+  "150": {
+    "taskdesc": "Loris-Screener",
+    "tasktype": "Q",
+    "taskbody": {
+      "shuffle_questions": true,
+      "heading": null,
+      "body": "Easy calibration question from **Loris**.\n\n_(If you answer correctly, you qualify for a game of secret hitler, his favorite board game.)_",
+      "please_answer_msg": "Please answer the question.",
+      "questions": {
+        "Loris": {
+          "Question": "If this question had a correct answer and you were to answer uniformly at random, what are the chances you would answer correctly?",
+          "QType": "check_vertical",
+          "options": [
+            "10%",
+            "25%",
+            "25% ",
+            "50%"
+          ]
+        }
+      }
+    },
+    "next_button": "Continue",
+    "next_task": 300
   },
   "200": {
     "taskdesc": "Zig-Role",
@@ -26,7 +50,7 @@
       "body": "To get started, we would like to ask you a few questions about yourself.",
       "please_answer_msg": "Please answer the question.",
       "questions": {
-        "G": {
+        "Role": {
           "Question": "What best describes your role in the Zig community?",
           "QType": "check_vertical",
           "options": [
@@ -38,8 +62,8 @@
             "I love programming in Zig"
           ]
         }
-        }
-      },
+      }
+    },
     "next_button": "Continue",
     "next_task": 300
   },
@@ -49,14 +73,14 @@
     "taskbody": {
       "shuffle_questions": false,
       "heading": null,
-      "body": "Please let your choice indicate where your answer fits on the awesomeness scpectrum.",
+      "body": "Please let your choice indicate where your answer fits on the awesomeness scpectrum:\n\n1 .. MEH\n\n4 .. neutral\n\n7 .. totally AWESOME!  **<-- recommended answer**", 
       "please_answer_msg": "Please answer all questions.",
       "questions": {
-        "Overall": {
+        "Experience": {
           "Question": "How are you liking the SYCL 2023 **experience** so far?",
           "QType": "check_horizontal",
           "show_dividers": true,
-          "scale_left": "O.K.",
+          "scale_left": "MEH",
           "scale_right": "AWESOME!!!",
           "options": [
             "1",
@@ -67,13 +91,13 @@
             "6",
             "7"
           ],
-          "show_option_labels": false
+          "show_option_labels": true
         },
         "Location": {
-          "Question": "How are you enjoying the SYCL 2023 **location** so far?",
+          "Question": "How are you enjoying the conference **location** so far?",
           "QType": "check_horizontal",
           "show_dividers": true,
-          "scale_left": "O.K.",
+          "scale_left": "MEH",
           "scale_right": "AWESOME!!!",
           "options": [
             "1",
@@ -84,7 +108,41 @@
             "6",
             "7"
           ],
-          "show_option_labels": false
+          "show_option_labels": true
+        },
+        "Talks": {
+          "Question": "How are you liking the conference **talks** so far?",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "MEH",
+          "scale_right": "AWESOME!!!",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        },
+        "Weather": {
+          "Question": "How are you liking the **weather** today?",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "MEH",
+          "scale_right": "AWESOME!!!",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
         }
       }
     },

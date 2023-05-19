@@ -87,7 +87,7 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                     return;
                 }
                 if (self.taskIdFromPath(p)) |taskid| {
-                    if (self.tasks.json_template.?.root.Object.get(taskid)) |*task| {
+                    if (self.tasks.json_template.?.root.object.get(taskid)) |*task| {
                         // task.dump();
                         var buf: [100 * 1024]u8 = undefined;
                         var fba = std.heap.FixedBufferAllocator.init(&buf);
@@ -158,7 +158,7 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                     std.debug.print("    user = {s}\n\n", .{string.items});
                 }
                 if (self.taskIdFromPath(p)) |taskid| {
-                    if (self.tasks.json_template.?.root.Object.get(taskid)) |*task| {
+                    if (self.tasks.json_template.?.root.object.get(taskid)) |*task| {
                         var buf: [100 * 1024]u8 = undefined;
                         var fba = std.heap.FixedBufferAllocator.init(&buf);
                         var string = std.ArrayList(u8).init(fba.allocator());

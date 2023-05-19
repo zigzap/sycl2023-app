@@ -24,7 +24,7 @@ pub fn update(self: *Self) !void {
     const template_buf = try std.fs.cwd().readFileAlloc(self.allocator, self.json_template_filn, self.json_template_max_filesize);
     defer self.allocator.free(template_buf);
 
-    var parser = std.json.Parser.init(self.allocator, true); // copy_strings!
+    var parser = std.json.Parser.init(self.allocator, .alloc_always); // copy_strings!
     if (self.json_template) |*t| {
         t.deinit();
     }

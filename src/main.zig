@@ -64,7 +64,7 @@ pub fn main() !void {
         } else |err| {
             switch (err) {
                 error.FileNotFound => |e| std.debug.print("File not found: {any}\n", .{e}),
-                else => |e| std.debug.print("File not found: {any}\n", .{e}),
+                else => |e| std.debug.print("File parsing error: {any}\n", .{e}),
             }
             return;
         }
@@ -124,11 +124,13 @@ pub fn main() !void {
     zap.start(.{
         .threads = 4,
 
-        // IMPORTANT! It is crucial to only have a single worker for this example to work!
+        // IMPORTANT!
+        //
+        // It is crucial to only have a single worker for this example to work!
         // Multiple workers would have multiple copies of the users hashmap.
         //
         // Since zap is quite fast, you can do A LOT with a single worker.
-        // Try it with `zig build run-endpoint -Drelease-fast`
+        // Try it with `zig build -Doptimize=ReleaseFast
         .workers = 1,
     });
     std.debug.print("\n\nThreads stopped\n", .{});
