@@ -53,6 +53,9 @@ pub fn main() !void {
     //
     // /SYCL-API/TASKS
     //
+    // The tasks endpoint. Will be queried by the frontends running in the
+    // browsers of participants
+    //
     var tasksEndpoint = blk: {
         if (TasksEndpoint.init(
             allocator,
@@ -73,6 +76,9 @@ pub fn main() !void {
     //
     // /FRONTEND
     //
+    // The Questionnaire SPA running in the browser will fetch its files from
+    // here.
+    //
     var frontendEndpoint = try FrontendEndpoint.init(.{
         .allocator = allocator,
         .www_root = ".",
@@ -81,12 +87,16 @@ pub fn main() !void {
     });
 
     //
-    // /SYCL-API/USERS
+    // /admin
+    //
+    // This used to be an API for users. For the sake of simplicity, we'll pivot
+    // to it being the "admin" webapp. It's protected by username / pw auth
+    // and let you display statistics, download JSON, etc.
     //
     var users = tasksEndpoint.getUsers();
     var usersEndpoint = try UsersEndpoint.init(
         allocator,
-        "/sycl-api/users",
+        "/admin",
         tasksEndpoint.getUsers(),
     );
     const PWAuthenticatingEndpoint = zap.AuthenticatingEndpoint(PWAuthenticator.Authenticator);
