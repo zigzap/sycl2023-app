@@ -27,12 +27,13 @@ pub fn init(allocator: std.mem.Allocator, pwfile: []const u8, loginpagepath: []c
 
     const contents = try std.fs.cwd().readFileAlloc(allocator, pwfile, MaxFileSize);
     var it = std.mem.split(u8, contents, "\n");
+    std.debug.print("\nAvailable users:\n", .{});
     while (it.next()) |line| {
         if (std.mem.indexOf(u8, line, ":")) |pos| {
             const username = std.mem.trim(u8, line[0..pos], " \t");
             const password = std.mem.trim(u8, line[pos + 1 ..], " \t\n");
             try map.put(username, password);
-            std.debug.print("`{s}`: `{s}`\n", .{ username, password });
+            std.debug.print("    `{s}`: **********\n", .{username});
         }
     }
 

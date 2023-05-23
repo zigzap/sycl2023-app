@@ -25,7 +25,7 @@ pub fn init(a: std.mem.Allocator, users_path: []const u8, users: *Users) !Self {
     };
 }
 
-pub fn getUsersEndpoint(self: *Self) *zap.SimpleEndpoint {
+pub fn getAdminEndpoint(self: *Self) *zap.SimpleEndpoint {
     return &self.endpoint;
 }
 

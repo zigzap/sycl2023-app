@@ -2,12 +2,14 @@ const std = @import("std");
 const zap = @import("zap");
 const TasksEndpoint = @import("endpoints/tasks_endpoint.zig");
 const FrontendEndpoint = @import("endpoints/frontend_endpoint.zig");
-const UsersEndpoint = @import("endpoints/users_endpoint.zig");
+const AdminEndpoint = @import("endpoints/admin_endpoint.zig");
 const PWAuthenticator = @import("pwauth.zig");
 
 const survey_tasks_template = "data/templates/sycl2023-survey.json";
 const users_json_maxsize = 1024 * 50;
 const users_json_filn = "users.json";
+
+const FRONTEND_SLUG = "/frontend";
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{
@@ -20,7 +22,7 @@ pub fn main() !void {
     var pw_authenticator = PWAuthenticator.init(
         allocator,
         pw_filn,
-        "/login",
+        FRONTEND_SLUG ++ "/login",
     ) catch |err| {
         std.debug.print(
             "ERROR: Could not read " ++ pw_filn ++ ": {any}\n",
@@ -36,12 +38,12 @@ pub fn main() !void {
         \\
         \\
         \\ ======================================================
-        \\ ===   Visit me on http://127.0.0.1:5000/frontend   ===
+        \\ ===   Visit me on http://127.0.0.1:5000{s}   ===
         \\ ======================================================
         \\
         \\
         \\
-    , .{});
+    , .{FRONTEND_SLUG});
 
     var listener = zap.SimpleEndpointListener.init(allocator, .{
         .port = 5000,
@@ -82,8 +84,8 @@ pub fn main() !void {
     var frontendEndpoint = try FrontendEndpoint.init(.{
         .allocator = allocator,
         .www_root = ".",
-        .endpoint_path = "/frontend",
-        .index_html = "/frontend/index.html",
+        .endpoint_path = FRONTEND_SLUG,
+        .index_html = FRONTEND_SLUG ++ "/index.html",
     });
 
     //
@@ -93,14 +95,14 @@ pub fn main() !void {
     // to it being the "admin" webapp. It's protected by username / pw auth
     // and let you display statistics, download JSON, etc.
     //
-    var users = tasksEndpoint.getUsers();
-    var usersEndpoint = try UsersEndpoint.init(
+    var users = tasksEndpoint.getUsers(); // the admin endpoint needs access to the participants
+    var adminEndpoint = try AdminEndpoint.init(
         allocator,
         "/admin",
-        tasksEndpoint.getUsers(),
+        users,
     );
     const PWAuthenticatingEndpoint = zap.AuthenticatingEndpoint(PWAuthenticator.Authenticator);
-    var pw_auth_endpoint = PWAuthenticatingEndpoint.init(usersEndpoint.getUsersEndpoint(), &pw_authenticator.authenticator);
+    var pwauthAdminEndpoint = PWAuthenticatingEndpoint.init(adminEndpoint.getAdminEndpoint(), &pw_authenticator.authenticator);
 
     var args = std.process.args();
     var do_load = false;
@@ -109,6 +111,7 @@ pub fn main() !void {
             do_load = true;
         }
     }
+
     // check if we have a users.json
     if (do_load) {
         var dir = std.fs.cwd();
@@ -126,7 +129,7 @@ pub fn main() !void {
 
     try listener.addEndpoint(tasksEndpoint.getTaskEndpoint());
     try listener.addEndpoint(frontendEndpoint.getFrontendEndpoint());
-    try listener.addEndpoint(pw_auth_endpoint.getEndpoint());
+    try listener.addEndpoint(pwauthAdminEndpoint.getEndpoint());
 
     try listener.listen();
     zap.enableDebugLog();
