@@ -80,6 +80,12 @@ pub fn getFrontendEndpoint(self: *Self) *zap.SimpleEndpoint {
 
 fn getFrontend(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
     const self = @fieldParentPtr(Self, "endpoint", e);
+    self.getFrontenInternal(r) catch |err| {
+        r.sendError(err, 505);
+    };
+}
+
+fn getFrontenInternal(self: *Self, r: zap.SimpleRequest) !void {
     var fn_buf: [2048]u8 = undefined;
     if (r.path) |p| {
         var html_path: []const u8 = undefined;
@@ -100,8 +106,8 @@ fn getFrontend(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
         if (std.fmt.bufPrint(&fn_buf, "{s}{s}", .{ self.www_root_cage, html_path })) |fp| {
             // now check if the absolute path starts with the frontend cage
             if (std.mem.startsWith(u8, fp, self.frontend_dir_absolute)) {
-                r.setHeader("Cache-Control", "no-cache") catch return;
-                r.sendFile(fp) catch return;
+                try r.setHeader("Cache-Control", "no-cache");
+                try r.sendFile(fp);
                 return;
             } // else 404 below
         } else |err| {
@@ -111,6 +117,6 @@ fn getFrontend(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
     }
 
     r.setStatus(.not_found);
-    r.setHeader("Cache-Control", "no-cache") catch return;
-    r.sendBody("<html><body><h1>404 - File not found</h1></body></html>") catch return;
+    try r.setHeader("Cache-Control", "no-cache");
+    try r.sendBody("<html><body><h1>404 - File not found</h1></body></html>");
 }
