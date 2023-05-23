@@ -56,27 +56,27 @@ pub fn build(b: *std.Build) void {
     //
     // TESTS
     //
-    const users_test = b.addTest(.{
-        .root_source_file = .{ .path = "src/users.zig" },
+    const participants_test = b.addTest(.{
+        .root_source_file = .{ .path = "src/participants.zig" },
         .target = target,
         .optimize = optimize,
     });
 
     const pwauth_test = b.addTest(.{
-        .root_source_file = .{ .path = "src/upauth.zig" },
+        .root_source_file = .{ .path = "src/pwauth.zig" },
         .target = target,
         .optimize = optimize,
     });
 
     pwauth_test.addModule("zap", zap.module("zap"));
 
-    const run_users_test = b.addRunArtifact(users_test);
+    const run_participants_test = b.addRunArtifact(participants_test);
     const run_pwauth_test = b.addRunArtifact(pwauth_test);
 
     // Similar to creating the run step earlier, this exposes a `test` step to
-    // the `zig build --help` menu, providing a way for the user to request
+    // the `zig build --help` menu, providing a way for the participant to request
     // running the unit tests.
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&run_pwauth_test.step);
-    test_step.dependOn(&run_users_test.step);
+    test_step.dependOn(&run_participants_test.step);
 }

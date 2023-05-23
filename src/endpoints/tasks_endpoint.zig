@@ -1,21 +1,21 @@
 const std = @import("std");
 const zap = @import("zap");
 const Tasks = @import("../tasks.zig");
-const Users = @import("../users.zig");
-const User = Users.User;
+const Participants = @import("../participants.zig");
+const Participant = Participants.Participant;
 
 alloc: std.mem.Allocator = undefined,
 endpoint: zap.SimpleEndpoint = undefined,
-users: Users = undefined,
+participants: Participants = undefined,
 tasks: Tasks = undefined,
-max_users: usize,
+max_participants: usize,
 
 pub const Self = @This();
 
 // not using context / callback functions from mustache. we rather use prepared vars
 pub const RenderContext = struct {
     // put stuff in there you want to refer in the json template
-    userid: isize,
+    participantid: isize,
     rustOrBust: bool,
 };
 
@@ -23,7 +23,7 @@ pub fn init(
     a: std.mem.Allocator,
     task_path: []const u8,
     task_template_filn: []const u8,
-    max_users: usize,
+    max_participants: usize,
 ) !Self {
     var ret: Self = .{
         .tasks = try Tasks.init(a, task_template_filn),
@@ -35,14 +35,14 @@ pub fn init(
             .put = null,
             .delete = null,
         }),
-        .users = try Users.init(a, max_users),
-        .max_users = max_users,
+        .participants = try Participants.init(a, max_participants),
+        .max_participants = max_participants,
     };
     return ret;
 }
 
-pub fn getUsers(self: *Self) *Users {
-    return &self.users;
+pub fn getParticipants(self: *Self) *Participants {
+    return &self.participants;
 }
 
 pub fn getTasks(self: *Self) *Tasks {
@@ -77,12 +77,12 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
             self.reloadTasks(r);
         }
 
-        // get userid from query
+        // get participant id from query
         if (r.query) |q| {
-            if (userIdFromQuery(q)) |uid| {
+            if (participantIdFromQuery(q)) |uid| {
                 if (!std.mem.eql(u8, uid, "null")) {
-                    std.debug.print("    ERROR User ID must be null, got: {s}\n", .{uid});
-                    r.sendJson("{\"error\": \"invalid user id\"}") catch return;
+                    std.debug.print("    ERROR Participant ID must be null, got: {s}\n", .{uid});
+                    r.sendJson("{\"error\": \"invalid participant id\"}") catch return;
                     return;
                 }
                 if (self.taskIdFromPath(p)) |taskid| {
@@ -112,38 +112,38 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
 fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
     const self = @fieldParentPtr(Self, "endpoint", e);
     if (r.path) |p| {
-        // get userid from query
+        // get participant id from query
         if (r.query) |q| {
             std.debug.print("    post {s}?{s}\n", .{ p, q });
-            if (userIdFromQuery(q)) |uid| {
-                var user: *User = undefined;
+            if (participantIdFromQuery(q)) |uid| {
+                var participant: *Participant = undefined;
 
-                // special case: if user id is 0 -> create new user and
-                // communicate it back!
+                // special case: if participant id is 0 -> create new participant
+                // and communicate it back!
                 if (std.mem.eql(u8, uid, "null")) {
-                    if (self.users.newUser()) |up| {
-                        user = up;
+                    if (self.participants.newParticipant()) |up| {
+                        participant = up;
                     } else |err| {
-                        std.debug.print("    Error: exhausted number of users: {d}\n{any}\n", .{ self.max_users, err });
+                        std.debug.print("    Error: exhausted number of participants: {d}\n{any}\n", .{ self.max_participants, err });
                         r.setStatus(.internal_server_error);
-                        r.sendJson("{ \"status\": \"too many users\"}") catch return;
+                        r.sendJson("{ \"status\": \"too many participants\"}") catch return;
                         return;
                     }
                 } else {
-                    // get the user
-                    if (self.users.getUserFromIdString(uid)) |up| {
-                        user = up;
+                    // get the participant
+                    if (self.participants.getParticipantFromIdString(uid)) |up| {
+                        participant = up;
                     } else |err| {
-                        std.debug.print("    Error: invalid userid {s}\n{any}\n", .{ uid, err });
+                        std.debug.print("    Error: invalid participantid {s}\n{any}\n", .{ uid, err });
                         r.setStatus(.internal_server_error);
-                        r.sendJson("{ \"status\": \"invalid user id\"}") catch return;
+                        r.sendJson("{ \"status\": \"invalid participant id\"}") catch return;
                         return;
                     }
                 }
 
-                // update the user's appdata based on the received json
+                // update the participant's appdata based on the received json
                 if (r.body) |body| {
-                    if (user.updateAppdataFromJSON(body)) {
+                    if (participant.updateAppdataFromJSON(body)) {
                         // OK
                     } else |err| {
                         std.debug.print("    Error cloning appdata: {any}\n", .{err});
@@ -153,24 +153,24 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                     var buf: [100 * 1024]u8 = undefined;
                     var fba = std.heap.FixedBufferAllocator.init(&buf);
                     var string = std.ArrayList(u8).init(fba.allocator());
-                    user.jsonStringify(.{}, string.writer()) catch unreachable;
-                    std.debug.print("    user = {s}\n\n", .{string.items});
+                    participant.jsonStringify(.{}, string.writer()) catch unreachable;
+                    std.debug.print("    participant = {s}\n\n", .{string.items});
                 }
                 if (self.taskIdFromPath(p)) |taskid| {
                     if (self.tasks.json_template.?.root.object.get(taskid)) |*task| {
                         var buf: [100 * 1024]u8 = undefined;
                         var fba = std.heap.FixedBufferAllocator.init(&buf);
                         var string = std.ArrayList(u8).init(fba.allocator());
-                        // HACK: return list of userid, task
-                        string.writer().print("[ {d}, ", .{user.userid}) catch return;
+                        // HACK: return list of participantid, task
+                        string.writer().print("[ {d}, ", .{participant.participantid}) catch return;
                         if (task.jsonStringify(.{}, string.writer())) {
-                            // close the list of [userid, task ]
+                            // close the list of [participantid, task ]
                             string.writer().writeAll("]") catch return;
                             // MUSTACHE THE STRING!!!!
                             const template = string.items;
                             const m = zap.MustacheNew(template) catch return;
                             defer zap.MustacheFree(m);
-                            const context = RenderContextFromUser(user);
+                            const context = RenderContextFromParticipant(participant);
                             const rendered = zap.MustacheBuild(m, context);
                             defer rendered.deinit();
                             if (rendered.str()) |s| {
@@ -193,14 +193,14 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
     }
 }
 
-fn RenderContextFromUser(user: *User) RenderContext {
+fn RenderContextFromParticipant(participant: *Participant) RenderContext {
     return .{
-        .userid = @intCast(isize, user.userid),
+        .participantid = @intCast(isize, participant.participantid),
         .rustOrBust = false,
     };
 }
 
-// shouldn't we just return which user is in which task?
+// shouldn't we just return which participant is in which task?
 fn listTasks(self: *Self, r: zap.SimpleRequest) void {
     var buf: [100 * 1024]u8 = undefined;
     var fba = std.heap.FixedBufferAllocator.init(&buf);
@@ -223,7 +223,7 @@ fn reloadTasks(self: *Self, r: zap.SimpleRequest) void {
     }
 }
 
-pub fn userIdFromQuery(query: []const u8) ?[]const u8 {
+pub fn participantIdFromQuery(query: []const u8) ?[]const u8 {
     var startpos: usize = 0;
     var endpos: usize = query.len;
     if (std.mem.indexOfScalar(u8, query, '&')) |amp| {

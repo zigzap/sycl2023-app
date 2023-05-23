@@ -6,8 +6,10 @@ const AdminEndpoint = @import("endpoints/admin_endpoint.zig");
 const PWAuthenticator = @import("pwauth.zig");
 
 const survey_tasks_template = "data/templates/sycl2023-survey.json";
-const users_json_maxsize = 1024 * 50;
-const users_json_filn = "users.json";
+
+// max size for all persisted participants
+const participants_json_maxsize = 50 * 1024 * 1024;
+const participants_json_filn = "participants.json";
 
 const FRONTEND_SLUG = "/frontend";
 
@@ -63,7 +65,7 @@ pub fn main() !void {
             allocator,
             "/sycl-api/tasks", // slug
             survey_tasks_template, // task template
-            1000, // max. 1000 users
+            1000, // max. 1000 participants
         )) |ep| {
             break :blk ep;
         } else |err| {
@@ -91,15 +93,15 @@ pub fn main() !void {
     //
     // /admin
     //
-    // This used to be an API for users. For the sake of simplicity, we'll pivot
+    // This used to be an API for participants. For the sake of simplicity, we'll pivot
     // to it being the "admin" webapp. It's protected by username / pw auth
     // and let you display statistics, download JSON, etc.
     //
-    var users = tasksEndpoint.getUsers(); // the admin endpoint needs access to the participants
+    var participants = tasksEndpoint.getParticipants(); // the admin endpoint needs access to the participants
     var adminEndpoint = try AdminEndpoint.init(
         allocator,
         "/admin",
-        users,
+        participants,
     );
     const PWAuthenticatingEndpoint = zap.AuthenticatingEndpoint(PWAuthenticator.Authenticator);
     var pwauthAdminEndpoint = PWAuthenticatingEndpoint.init(adminEndpoint.getAdminEndpoint(), &pw_authenticator.authenticator);
@@ -112,18 +114,18 @@ pub fn main() !void {
         }
     }
 
-    // check if we have a users.json
+    // check if we have a participants.json
     if (do_load) {
         var dir = std.fs.cwd();
-        if (dir.statFile(users_json_filn)) |_| {
-            std.debug.print("\n\nL O A D I N G   E X I S T I N G   " ++ users_json_filn ++ "\n", .{});
-            const template_buf = try std.fs.cwd().readFileAlloc(allocator, users_json_filn, users_json_maxsize);
+        if (dir.statFile(participants_json_filn)) |_| {
+            std.debug.print("\n\nL O A D I N G   E X I S T I N G   " ++ participants_json_filn ++ "\n", .{});
+            const template_buf = try std.fs.cwd().readFileAlloc(allocator, participants_json_filn, participants_json_maxsize);
             defer allocator.free(template_buf);
             if (template_buf.len > 0) {
-                try users.restoreStateFromJson(template_buf);
+                try participants.restoreStateFromJson(template_buf);
             }
         } else |err| {
-            std.debug.print("ERROR loading " ++ users_json_filn ++ ": {any}\n", .{err});
+            std.debug.print("ERROR loading " ++ participants_json_filn ++ ": {any}\n", .{err});
         }
     }
 
@@ -140,7 +142,7 @@ pub fn main() !void {
         // IMPORTANT!
         //
         // It is crucial to only have a single worker for this example to work!
-        // Multiple workers would have multiple copies of the users hashmap.
+        // Multiple workers would have multiple copies of the participants hashmap.
         //
         // Since zap is quite fast, you can do A LOT with a single worker.
         // Try it with `zig build -Doptimize=ReleaseFast

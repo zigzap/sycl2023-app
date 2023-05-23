@@ -61,7 +61,7 @@ pub fn deinit(self: *Self) void {
     self.allocator.free(self.contents);
 }
 
-test "it" {
+test "pwauth" {
     var a = std.testing.allocator;
 
     // create simple pw file
@@ -72,7 +72,7 @@ test "it" {
     const filename = "xxxxfile.xxx";
     try std.fs.cwd().writeFile(filename, contents);
 
-    var x = try Self.init(a, filename);
+    var x = try Self.init(a, filename, "/login");
     defer x.deinit();
 
     const pw1 = x.map.get("rene");
