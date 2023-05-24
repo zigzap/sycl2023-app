@@ -118,6 +118,14 @@ async function init() {
     state.current_task_id = 0;
     state.userid = "null";
 
+    // disable back button
+    window.onbeforeunload = function() { return "Your work will be lost."; };
+    history.pushState(null, document.title, location.href);
+    window.addEventListener('popstate', function (event)
+    {
+      history.pushState(null, document.title, location.href);
+    });
+
     // TODO: while developing:
     //
     // DANGER: make sure to disable this reloading in production or else
@@ -150,6 +158,7 @@ async function init() {
         loadInitialTask(on_task_loaded);
     }
 }
+
 
 init();
 
