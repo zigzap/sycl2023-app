@@ -65,15 +65,15 @@ pub fn Endpoint(comptime Authenticator: type) type {
                 }
 
                 if (std.mem.eql(u8, local_path, "/save")) {
-                    return listOrSaveParticipants(self, r);
+                    return listOrSaveParticipants(self, r, local_path);
                 }
 
                 if (std.mem.eql(u8, local_path, "/list")) {
-                    return listOrSaveParticipants(self, r);
+                    return listOrSaveParticipants(self, r, local_path);
                 }
 
                 if (std.mem.eql(u8, local_path, "/count")) {
-                    return listOrSaveParticipants(self, r);
+                    return listOrSaveParticipants(self, r, local_path);
                 }
 
                 // ELSE serve file
@@ -106,48 +106,47 @@ pub fn Endpoint(comptime Authenticator: type) type {
             }
         }
 
-        fn listOrSaveParticipants(self: *Self, r: zap.SimpleRequest) void {
-            if (r.path) |path| {
-                if (std.mem.endsWith(u8, path, "/save")) {
-                    if (self.participantsToJsonAlloc()) |allocJson| {
-                        std.debug.print("    Saving to participants.json...  ", .{});
-                        if (self.saveParticipants(allocJson.json)) {
-                            self.allocator.free(allocJson.buffer_to_free);
-                            std.debug.print("DONE!\n", .{});
-                            r.sendJson("{ \"status\": \"OK\"}") catch return;
-                        } else |err| {
-                            std.debug.print("ERROR {any}!\n", .{err});
-                            r.sendJson("{ \"error\": \"not saved\"}") catch return;
-                        }
+        fn listOrSaveParticipants(self: *Self, r: zap.SimpleRequest, local_path: []const u8) void {
+            const path = local_path;
+            if (std.mem.endsWith(u8, path, "/save")) {
+                if (self.participantsToJsonAlloc()) |allocJson| {
+                    std.debug.print("    Saving to participants.json...  ", .{});
+                    if (self.saveParticipants(allocJson.json)) {
+                        self.allocator.free(allocJson.buffer_to_free);
+                        std.debug.print("DONE!\n", .{});
+                        r.sendJson("{ \"status\": \"OK\"}") catch return;
                     } else |err| {
-                        // TODO: what's the best status to return?
-                        std.debug.print("    save error: {any}\n", .{err});
-                        r.setStatus(.not_found);
-                        r.sendJson("{ \"status\": \"not found\"}") catch return;
+                        std.debug.print("ERROR {any}!\n", .{err});
+                        r.sendJson("{ \"error\": \"not saved\"}") catch return;
                     }
-                } else if (std.mem.endsWith(u8, path, "/list")) {
-                    if (self.participantsToJsonAlloc()) |allocJson| {
-                        defer self.allocator.free(allocJson.buffer_to_free);
-                        r.sendJson(allocJson.json) catch return;
-                    } else |err| {
-                        // TODO: what's the best status to return?
-                        std.debug.print("    list error: {any}\n", .{err});
-                        r.setStatus(.not_found);
-                        r.sendJson("{ \"status\": \"not found\"}") catch return;
-                    }
-                } else if (std.mem.endsWith(u8, path, "/count")) {
-                    var buf: [128]u8 = undefined;
-                    if (std.fmt.bufPrint(&buf,
-                        \\ {{
-                        \\    "count" : {d}
-                        \\ }}
-                    , .{self.participants.current_participant_id})) |json| {
-                        r.sendJson(json) catch return;
-                    } else |err| {
-                        std.debug.print("    count error: {any}\n", .{err});
-                        r.setStatus(.not_found);
-                        r.sendJson("{ \"status\": \"not found\"}") catch return;
-                    }
+                } else |err| {
+                    // TODO: what's the best status to return?
+                    std.debug.print("    save error: {any}\n", .{err});
+                    r.setStatus(.not_found);
+                    r.sendJson("{ \"status\": \"not found\"}") catch return;
+                }
+            } else if (std.mem.endsWith(u8, path, "/list")) {
+                if (self.participantsToJsonAlloc()) |allocJson| {
+                    defer self.allocator.free(allocJson.buffer_to_free);
+                    r.sendJson(allocJson.json) catch return;
+                } else |err| {
+                    // TODO: what's the best status to return?
+                    std.debug.print("    list error: {any}\n", .{err});
+                    r.setStatus(.not_found);
+                    r.sendJson("{ \"status\": \"not found\"}") catch return;
+                }
+            } else if (std.mem.endsWith(u8, path, "/count")) {
+                var buf: [128]u8 = undefined;
+                if (std.fmt.bufPrint(&buf,
+                    \\ {{
+                    \\    "count" : {d}
+                    \\ }}
+                , .{self.participants.current_participant_id})) |json| {
+                    r.sendJson(json) catch return;
+                } else |err| {
+                    std.debug.print("    count error: {any}\n", .{err});
+                    r.setStatus(.not_found);
+                    r.sendJson("{ \"status\": \"not found\"}") catch return;
                 }
             }
             r.setStatus(.not_found);
@@ -172,6 +171,16 @@ pub fn Endpoint(comptime Authenticator: type) type {
         };
 
         fn participantsToJsonAlloc(self: *Self) !AllocJson {
+            std.debug.print("\n\n/save: {} participants\n\n", .{self.participants.current_participant_id});
+            if (self.participants.current_participant_id == 0) {
+                var json = try std.fmt.allocPrint(self.allocator, "{{}}", .{});
+
+                return .{
+                    .json = json,
+                    .buffer_to_free = json,
+                };
+            }
+
             var buf = try self.allocator.alloc(
                 u8,
                 self.participants.current_participant_id * 512 * 1024, // 512kb per participant

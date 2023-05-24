@@ -105,12 +105,12 @@ async function init() {
     state.userid = "null";
 
     // disable back button
-    window.onbeforeunload = function() { return "Your inputs will be lost."; };
-    history.pushState(null, document.title, location.href);
-    window.addEventListener('popstate', function (event)
-    {
-      history.pushState(null, document.title, location.href);
-    });
+    // window.onbeforeunload = function() { return "Your inputs will be lost."; };
+    // history.pushState(null, document.title, location.href);
+    // window.addEventListener('popstate', function (event)
+    // {
+    //   history.pushState(null, document.title, location.href);
+    // });
 }
 
 
