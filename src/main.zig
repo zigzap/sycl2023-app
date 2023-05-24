@@ -12,27 +12,13 @@ const participants_json_maxsize = 50 * 1024 * 1024;
 const participants_json_filn = "participants.json";
 
 const FRONTEND_SLUG = "/frontend";
+const ADMIN_SLUG = "/admin";
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{
         .thread_safe = true,
     }){};
     var allocator = gpa.allocator();
-
-    // first, create the UserPassword Authenticator from the passwords file
-    const pw_filn = "passwords.txt";
-    var pw_authenticator = PWAuthenticator.init(
-        allocator,
-        pw_filn,
-        FRONTEND_SLUG ++ "/login",
-    ) catch |err| {
-        std.debug.print(
-            "ERROR: Could not read " ++ pw_filn ++ ": {any}\n",
-            .{err},
-        );
-        return;
-    };
-    defer pw_authenticator.deinit();
 
     zap.Log.fio_set_log_level(zap.Log.fio_log_level_debug);
     std.debug.print(
@@ -96,12 +82,30 @@ pub fn main() !void {
     // This used to be an API for participants. For the sake of simplicity, we'll pivot
     // to it being the "admin" webapp. It's protected by username / pw auth
     // and let you display statistics, download JSON, etc.
+
+    // first, create the UserPassword Authenticator from the passwords file
+    const pw_filn = "passwords.txt";
+    var pw_authenticator = PWAuthenticator.init(
+        allocator,
+        pw_filn,
+        ADMIN_SLUG ++ "/login",
+    ) catch |err| {
+        std.debug.print(
+            "ERROR: Could not read " ++ pw_filn ++ ": {any}\n",
+            .{err},
+        );
+        return;
+    };
+    defer pw_authenticator.deinit();
+
     //
     var participants = tasksEndpoint.getParticipants(); // the admin endpoint needs access to the participants
-    var adminEndpoint = try AdminEndpoint.init(
+    // we hacked passing in the Authenticator so we can call .logout() on it.
+    var adminEndpoint = try AdminEndpoint.Endpoint(PWAuthenticator).init(
         allocator,
-        "/admin",
+        ADMIN_SLUG,
         participants,
+        &pw_authenticator,
     );
     const PWAuthenticatingEndpoint = zap.AuthenticatingEndpoint(PWAuthenticator.Authenticator);
     var pwauthAdminEndpoint = PWAuthenticatingEndpoint.init(adminEndpoint.getAdminEndpoint(), &pw_authenticator.authenticator);

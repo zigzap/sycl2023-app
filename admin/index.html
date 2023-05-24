@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="description" content="sycl2023 zap app demo">
+        <title>SYCL 2023 Survey</title>
+
+        <link rel="stylesheet" href="index.css">
+
+        <!-- user flutter font Roboto -->
+        <!-- <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900' rel='stylesheet' type='text/css'> -->
+        <!-- <link href="Roboto.css" rel="stylesheet" type="text/css"> -->
+
+        <!-- Add icon library -->
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+        <link rel="stylesheet" href="font-awesome.min.css">
+
+        <!-- use showdown for markdown rendering -->
+        <!--<script src="showdown.min.js" integrity="sha512-LhccdVNGe2QMEfI3x4DVV3ckMRe36TfydKss6mJpdHjNFiV07dFpS2xzeZedptKZrwxfICJpez09iNioiSZ3hA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>-->
+        <script src="showdown.min.js"></script>
+
+    </head>
+
+    <body>
+
+        <!-- This is where the individual screens will be rendered -->
+        <div id="overlay"></div>
+        <div id="screen-container" class="basic_screen">
+            <div id="screen"> </div>
+            <div class="loader_container" id="loader"
+                style="display:none">
+                <div class="loader"></div>
+                <p>LOADING ...<p>
+            </div>
+        </div>
+        <div id="snackbar"></div>
+
+        <p style="color:red;">Admin Page</p>
+        <!-- Load the script and start executing -->
+        <script>
+            var header = document.getElementById('header');
+            var scriptTag = document.createElement("script");
+            scriptTag.src = "index.js?version=0";
+            scriptTag.type = "module";
+            document.head.appendChild(scriptTag);
+        </script>
+    </body>
+</html>

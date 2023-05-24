@@ -2,14 +2,12 @@ const std = @import("std");
 const zap = @import("zap");
 const Lookup = std.StringHashMap([]const u8);
 
-const auth_lock_token_table = false;
 const auth_lock_pw_table = false;
 
 // see the source for more info
 pub const Authenticator = zap.UserPassSessionAuth(
     Lookup,
     auth_lock_pw_table, // we may set this to true if we expect our username -> password map to change
-    auth_lock_token_table, // we may set this to true to have session tokens deleted server-side on logout
 );
 
 const MaxFileSize = 10 * 1024;

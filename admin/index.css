@@ -1,0 +1,422 @@
+  @font-face { font-family: "Press Start 2P"; src: url('press-start-2p.ttf'); }
+
+html {
+  /* https://css-tricks.com/simplified-fluid-typography/ */
+  /* font-size: clamp(100%, 1rem + 1vw, 42px); */
+  /* font-family: Roboto; */
+  /* font-size: 16px; */
+  /* font-size: clamp(1rem, 2.0vw , 42px); */
+
+  /* https://css-tricks.com/simplified-fluid-typography/ */
+  /* font-size: clamp(100%, 1rem + 1vw, 42px); */
+  font-size: clamp(1rem, 1.0vw , 32px);
+  font-family: "Press Start 2P";
+  background-color: black;
+}
+
+.body {
+    background-color: #181a1b;
+    text-color: white;
+}
+
+.loader_container {
+    display: "none";
+    text-align: center;
+    /* color: #4ccaf4; */
+    color: grey;
+    padding: 20px;
+}
+
+/* How to - Overlay  */
+/* from https://www.w3schools.com/howto/howto_css_overlay.asp */
+.overlay {
+  position: fixed; /* Sit on top of the page content */
+  display: none; /* Hidden by default */
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #181a1b;
+  z-index: 100; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+  text-color: white;
+  overflow: scroll;
+  padding: 4px;
+}
+
+.overlay-text{
+    margin-left:1rem;
+    margin-right:1rem;
+    background-color: #181a1b;
+    color: #c8c3bc;
+    line-height: 150%;
+}
+.overlay-text h2 {
+    color: magenta;
+    text-align: center;
+    font-size: clamp(1rem, 2.0vw , 42px);
+}
+.overlay-text h3 {
+    color: yellow;
+    text-align: center;
+    font-size: clamp(1rem, 2.0vw , 42px);
+}
+.overlay-text a {
+    color: #4ccaf4;
+}
+
+.basic_screen {
+    background-color: #181a1b;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    /* padding: 2em; -- will cause the screen to be too wide! */
+    border-radius: 15px;
+}
+
+.basic_screen .title {
+    text-align: center;
+    /* background-color: #F4F4F4; */
+    /* padding: 0.5em; */
+    border-radius: 15px;
+}
+
+.overlay-text pre {
+    /* will be increased in mediaquery later */
+    font-size: 11px;
+}
+
+.basic_screen pre {
+    /* will be increased in mediaquery later */
+    font-size: 11px;
+}
+
+.welcome_screen {
+    padding: 1em;
+}
+
+.q_screen {
+    padding: 1em;
+}
+
+.thankyou_screen {
+    padding: 1em;
+}
+
+.welcome_screen .title {
+    color: yellow;
+    color: #f7a41d;
+}
+
+.welcome_screen .divider {
+    color: green;
+}
+
+.welcome_screen .agreement_check {
+    color: #cd192d;
+}
+
+.welcome_screen .data_protection {
+    color: #cd192d;
+}
+
+
+
+.welcome_screen {
+    .row {
+        display: flex;
+        align-items: center;
+    }
+
+    .checkbox {
+        padding-left: 20px;
+    }
+
+    label {
+        padding-left: 20px;
+    }
+
+    /* the background of the label in the checkboxrow */
+    .checkboxrow {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+
+
+    /* the text of the label in the checkboxrow */
+    label:hover {
+        color: #fd495d;
+    }
+}
+/* don't know why this doesn't work within .welcome_screen */
+    .hoverrow{
+        background: #282a2b;
+    }
+
+/*maybe*/
+.q_screen 
+    .checkbox {
+        padding-left: 20px;
+    }
+
+    label {
+        padding-left: 20px;
+    }
+
+    /* the background of the label in the checkboxrow */
+    .checkboxrow {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+
+    label:hover {
+        color: yellow;
+    }
+
+    .item_selected {
+        color: #fd495d;
+        color: yellow;
+    }
+}
+
+.hoverrow{
+    background: #282a2b;
+}
+
+/* .welcome_screen  */
+.welcome_screen img {
+    width: 100%;
+}
+
+.title {
+    line-height: 150%;
+}
+
+/* markdown text */
+.message {
+    color: #c8c3bc;
+    line-height: 150%;
+}
+
+.message h2 {
+    color: white;
+    line-height: 150%;
+}
+
+.message code { 
+    color: yellow;
+    font-family: "Press Start 2P";
+}
+
+.message strong {
+    color: white;
+}
+
+.message h3 {
+    color: white;
+    line-height: 150%;
+}
+
+.basic_screen .next_div {
+    /* background-color: black; */
+    text-align: right;
+    width: 80%;
+}
+
+.basic_screen .nextbutton {
+    color: white;
+    font-family: "Press Start 2P";
+    background-color: #cd192d;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 50px;
+    padding: 15px 32px;
+    font-weight: 100;
+    font-size: clamp(0.9rem, 1.0vw , 28px);
+    border-radius: 8px;
+}
+
+.basic_screen .dsbutton {
+    color: white;
+    font-family: "Press Start 2P";
+    background-color: grey;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 50px;
+    padding: 15px 32px;
+    font-weight: 100;
+    font-size: clamp(0.9rem, 1.0vw , 28px);
+    margin-right: 2em;
+    border-radius: 8px;
+}
+
+.q_screen {
+    color: yellow;
+    line-height: 150%;
+}
+
+.q_screen .message {
+    color: #c8c3bc;
+    line-height: 150%;
+}
+
+.q_screen strong { color: yellow; }
+
+.qvert {
+    color: yellow;
+    color: #f7a41d;
+}
+
+.qhoriz {
+    color: yellow;
+    color: #f7a41d;
+}
+.qvert_option {
+    /* padding: 15px; */
+    padding-left: 12px;
+    padding-bottom: 15px;
+    color: #909090;
+}
+
+.qhoriz table {
+    border: none;
+    color: #f7a41d;
+}
+
+/* 
+ * the boxes with radios and labels 
+*/
+    /* mobile first */
+.qhoriz td {
+  text-align: center;
+    font-size: 10;
+    background-color: #181a1b;
+    /* padding-left: ; */
+    /* padding-right: 0.3rem; */
+}
+/* the option labels  */
+.qhoriz td p {
+    font-size: clamp(0.5rem, 1.0vw , 18px);
+    color: #808080;
+}
+
+.qhoriz_leftscale {
+    width: 7rem;
+    color: #4ccaf4;
+}
+.qhoriz_rightscale {
+    width: 7rem;
+    color: #4ccaf4;
+}
+@media only screen and (min-width: 640px) {
+    .qhoriz td {
+      text-align: center;
+        font-size: clamp(0.8rem, 0.9vw , 22px);
+        background-color: #181a1b;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* the labels  */
+    .qhoriz td p {
+        font-size: clamp(0.5rem, 1.0vw , 18px);
+        color: #808080;
+    }
+
+    .qhoriz_leftscale {
+        width: 10rem;
+    }
+    .qhoriz_rightscale {
+        width: 10rem;
+    }
+
+    .basic_screen pre {
+        font-size: clamp(0.8rem, 1.6vw , 20px);
+    }
+
+    .overlay-text pre {
+        font-size: clamp(0.8rem, 1.6vw , 20px);
+    }
+}
+
+
+
+/* The snackbar - position it at the bottom and in the middle of the screen */
+#snackbar {
+  visibility: hidden; /* Hidden by default. Visible on click */
+  min-width: 300px; /* Set a default minimum width */
+  margin-left: -150px; /* Divide value of min-width by 2 */
+  xxx-background-color: #333; /* Black background color */
+  background-color: #EF5350;
+  color: #fff; /* White text color */
+  text-align: center; /* Centered text */
+  border-radius: 8px; /* Rounded borders */
+  padding: 16px; /* Padding */
+  position: fixed; /* Sit on top of the screen */
+  z-index: 1; /* Add a z-index if needed */
+  left: 50%; /* Center the snackbar */
+  right: 50%; /* Center the snackbar */
+  bottom: 30px; /* 30px from the bottom */
+  font-size: clamp(0.6rem, 1.2vw , 20px);
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+  visibility: visible; /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+/* LOADER */
+.loader {
+  border: 16px solid #909090;
+  border-radius: 50%;
+  border-top: 16px solid magenta;
+  width: 60px;
+  height: 60px;
+  margin: auto;
+  -webkit-animation: spin 0.5s linear infinite; /* Safari */
+  animation: spin 0.5s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
