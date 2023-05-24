@@ -7,7 +7,7 @@ const PWAuthenticator = @import("pwauth.zig");
 
 const survey_tasks_template = "data/templates/sycl2023-survey.json";
 
-// max size for all persisted participants
+// max size for all persisted participants when reading the file
 const participants_json_maxsize = 50 * 1024 * 1024;
 const participants_json_filn = "participants.json";
 
@@ -40,10 +40,11 @@ pub fn main() !void {
         .log = true,
     });
 
+    // /sycl-api/tasks
     //
-    // /SYCL-API/TASKS
+    // Serves a JSON API
     //
-    // The tasks endpoint. Will be queried by the frontends running in the
+    // The tasks API endpoint. Will be queried by the frontends running in the
     // browsers of participants
     //
     var tasksEndpoint = blk: {
@@ -63,8 +64,9 @@ pub fn main() !void {
         }
     };
 
+    // /frontend
     //
-    // /FRONTEND
+    // Serves HTML
     //
     // The Questionnaire SPA running in the browser will fetch its files from
     // here.
@@ -78,6 +80,8 @@ pub fn main() !void {
 
     //
     // /admin
+    //
+    // Serves the admin frontend plus the admin JSON API.
     //
     // This used to be an API for participants. For the sake of simplicity, we'll pivot
     // to it being the "admin" webapp. It's protected by username / pw auth
@@ -98,18 +102,20 @@ pub fn main() !void {
     };
     defer pw_authenticator.deinit();
 
-    //
     var participants = tasksEndpoint.getParticipants(); // the admin endpoint needs access to the participants
-    // we hacked passing in the Authenticator so we can call .logout() on it.
+    // we hacked passing in the PWAuthenticator so we can call .logout() on it.
     var adminEndpoint = try AdminEndpoint.Endpoint(PWAuthenticator).init(
         allocator,
         ADMIN_SLUG,
         participants,
         &pw_authenticator,
     );
+
+    // We wrap the admin endpoint that does the actual work in the PW authenticator
     const PWAuthenticatingEndpoint = zap.AuthenticatingEndpoint(PWAuthenticator.Authenticator);
     var pwauthAdminEndpoint = PWAuthenticatingEndpoint.init(adminEndpoint.getAdminEndpoint(), &pw_authenticator.authenticator);
 
+    // If specified on the command line, we load a previously saved participants state on startup
     var args = std.process.args();
     var do_load = false;
     while (args.next()) |arg| {
@@ -118,7 +124,7 @@ pub fn main() !void {
         }
     }
 
-    // check if we have a participants.json
+    // check if we have a participants.json - and load
     if (do_load) {
         var dir = std.fs.cwd();
         if (dir.statFile(participants_json_filn)) |_| {
@@ -133,12 +139,15 @@ pub fn main() !void {
         }
     }
 
+    // add all endpoints to the listener
     try listener.addEndpoint(tasksEndpoint.getTaskEndpoint());
     try listener.addEndpoint(frontendEndpoint.getFrontendEndpoint());
     try listener.addEndpoint(pwauthAdminEndpoint.getEndpoint());
 
+    // and GO!
     try listener.listen();
     zap.enableDebugLog();
+
     // start worker threads
     zap.start(.{
         .threads = 4,
