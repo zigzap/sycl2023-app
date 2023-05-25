@@ -106,7 +106,7 @@ pub fn Endpoint(comptime Authenticator: type) type {
             }
         }
 
-        fn listOrSaveParticipants(self: *Self, r: zap.SimpleRequest, local_path: []const u8) void {
+        fn listOrSaveParticipants(self: *Self, r: zap.SimpleRequest, local_path: []const u8) !void {
             const path = local_path;
             if (std.mem.endsWith(u8, path, "/save")) {
                 if (self.participantsToJsonAlloc()) |allocJson| {
@@ -114,7 +114,9 @@ pub fn Endpoint(comptime Authenticator: type) type {
                     if (self.saveParticipants(allocJson.json)) {
                         self.allocator.free(allocJson.buffer_to_free);
                         std.debug.print("DONE!\n", .{});
-                        r.sendJson("{ \"status\": \"OK\"}") catch return;
+                        var buf: [128]u8 = undefined;
+                        const x = try std.fmt.bufPrint(&buf, "{{ \"status\": \"OK\", \"SAVED\": {} }}", .{self.participants.current_participant_id});
+                        r.sendJson(x) catch return;
                     } else |err| {
                         std.debug.print("ERROR {any}!\n", .{err});
                         r.sendJson("{ \"error\": \"not saved\"}") catch return;

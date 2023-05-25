@@ -99,11 +99,22 @@ var utils = {
     },
 };
 
+async function on_save() {
+    const response = await fetch("/admin/save");
+    const data = await response.json();
+    utils.showToast(JSON.stringify(data));
+}
+
+
 
 async function init() {
     state.current_task_id = 0;
     state.userid = "null";
 
+    var x = document.getElementById("SAVE");
+    x.innerHTML = '<p><a id="X" style="color:4ccaf4" href="#" >save the participants</a></p>'
+    var X = document.getElementById("X");
+    X.onclick = on_save;
     // disable back button
     // window.onbeforeunload = function() { return "Your inputs will be lost."; };
     // history.pushState(null, document.title, location.href);
@@ -115,7 +126,5 @@ async function init() {
 
 
 init();
-
-
 
 

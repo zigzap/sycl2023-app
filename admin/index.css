@@ -11,7 +11,7 @@ html {
   /* font-size: clamp(100%, 1rem + 1vw, 42px); */
   font-size: clamp(1rem, 1.0vw , 32px);
   font-family: "Press Start 2P";
-  background-color: black;
+  background-color: #181818;
 }
 
 .body {
@@ -352,8 +352,8 @@ html {
 /* The snackbar - position it at the bottom and in the middle of the screen */
 #snackbar {
   visibility: hidden; /* Hidden by default. Visible on click */
-  min-width: 300px; /* Set a default minimum width */
-  margin-left: -150px; /* Divide value of min-width by 2 */
+  min-width: 600px; /* Set a default minimum width */
+  margin-left: -300px; /* Divide value of min-width by 2 */
   xxx-background-color: #333; /* Black background color */
   background-color: #EF5350;
   color: #fff; /* White text color */
@@ -365,7 +365,7 @@ html {
   left: 50%; /* Center the snackbar */
   right: 50%; /* Center the snackbar */
   bottom: 30px; /* 30px from the bottom */
-  font-size: clamp(0.6rem, 1.2vw , 20px);
+  font-size: clamp(0.8rem, 1.2vw , 20px);
 }
 
 /* Show the snackbar when clicking on a button (class added with JavaScript) */

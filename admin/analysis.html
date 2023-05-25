@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Survey Results Chart</title>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+body {
+    /* background-color: #404040; */
+}
+        .chart-container {
+            width: 60%;
+            margin: auto;
+            margin-bottom: 2em;
+        }
+    </style>
+</head>
+<body>
+    <div id="charts"></div>
+    <script>
+        async function show() {
+        Chart.register(ChartDataLabels);
+
+        const response = await fetch("/admin/list");
+        const data = await response.json();
+
+        var questions = Object.keys(data[0].appstate).filter(key => key != 'agreement_checked_at' && key != 'dataprotection_checked_at');
+        var colors = ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)', 'rgba(255, 159, 64, 0.5)'];
+
+        questions.forEach(function(question) {
+            // Count the answers for this question
+            var answerCounts = {};
+            data.forEach(function(participant) {
+                var answer = participant.appstate[question];
+                if (answerCounts[answer] == null) {
+                    answerCounts[answer] = 1;
+                } else {
+                    answerCounts[answer]++;
+                }
+            });
+
+            // Create a div for the chart
+            var div = document.createElement('div');
+            div.className = 'chart-container';
+            document.getElementById('charts').appendChild(div);
+
+            // Create a title for the chart
+            var title = document.createElement('h2');
+            title.innerText = question;
+            div.appendChild(title);
+
+            // Create a canvas for the chart
+            var canvas = document.createElement('canvas');
+            div.appendChild(canvas);
+
+            // Prepare colors for each bar
+            var barColors = colors.slice(0, Object.keys(answerCounts).length);
+
+            // Create the chart
+            var ctx = canvas.getContext('2d');
+            var totalParticipants = data.length;
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(answerCounts),
+                    datasets: [{
+                        label: 'Number of participants',
+                        data: Object.values(answerCounts),
+                        backgroundColor: barColors, // Use dynamic colors for each bar
+                        borderColor: 'rgba(0, 0, 0, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        datalabels: {
+                            color: 'black',
+                            formatter: function(value, context) {
+                                return (value/totalParticipants*100).toFixed(2) + '%';
+                            }
+                        }
+                    }
+                }
+            });
+        });
+        }
+        show();
+    </script>
+</body>
+</html>
