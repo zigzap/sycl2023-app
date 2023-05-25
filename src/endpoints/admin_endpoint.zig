@@ -96,6 +96,7 @@ pub fn Endpoint(comptime Authenticator: type) type {
                 const local_path = p[6..];
 
                 if (std.mem.eql(u8, local_path, "/authenticate")) {
+                    std.debug.print("got request to /authenticate!\n", .{});
                     try r.redirectTo("/admin/index.html", .found);
                 }
 
