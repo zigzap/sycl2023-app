@@ -1,26 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Survey Results Chart</title>
+    <title>Results </title>
     <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+        <link rel="stylesheet" href="/admin/index.css">
     <style>
-body {
-    /* background-color: #404040; */
-}
+        body {
+            background-color: #181818;
+            font-family: "Press Start 2P";
+        }
+
+        h1 {
+            color:yellow;
+        }
+        h2 {
+            color: #cd192D;
+            font-family: "Press Start 2P";
+        }
+
         .chart-container {
             width: 60%;
             margin: auto;
-            margin-bottom: 2em;
+            margin-bottom: 3em;
+            margin-top: 3em;
+            background-color: #D0D0D0;
+            padding: 40px;
+            border-radius: 20px;
         }
     </style>
 </head>
 <body>
+    <center>
+        <h1>RESULTS ARE IN!</>
+    </center>
     <div id="charts"></div>
     <script>
         async function show() {
         Chart.register(ChartDataLabels);
+        Chart.defaults.font.size = 20;
+        Chart.defaults.font.weight = "bold";
 
         const response = await fetch("/admin/list");
         const data = await response.json();
@@ -47,7 +67,7 @@ body {
 
             // Create a title for the chart
             var title = document.createElement('h2');
-            title.innerText = question;
+            title.innerText = "" + question;
             div.appendChild(title);
 
             // Create a canvas for the chart
@@ -68,7 +88,8 @@ body {
                         label: 'Number of participants',
                         data: Object.values(answerCounts),
                         backgroundColor: barColors, // Use dynamic colors for each bar
-                        borderColor: 'rgba(0, 0, 0, 1)',
+                        // borderColor: 'rgba(0, 0, 0, 1)',
+                        borderColor: 'grey',
                         borderWidth: 1
                     }]
                 },
