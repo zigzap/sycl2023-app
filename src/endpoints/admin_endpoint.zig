@@ -79,6 +79,8 @@ pub fn Endpoint(comptime Authenticator: type) type {
                 // ELSE serve file
                 const file_path = p[1..];
                 std.debug.print("Trying to serve: {s}\n", .{file_path});
+
+                r.setStatus(zap.StatusCode.ok);
                 try r.sendFile(file_path);
             }
         }

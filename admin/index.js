@@ -112,7 +112,7 @@ async function init() {
     state.userid = "null";
 
     var x = document.getElementById("SAVE");
-    x.innerHTML = '<p><a id="X" style="color:4ccaf4" href="#" >save data to tape</a></p>'
+    x.innerHTML = '<a id="X" style="color:4ccaf4" href="#" >SAVE DATA TO TAPE</a>'
     var X = document.getElementById("X");
     X.onclick = on_save;
     // disable back button
