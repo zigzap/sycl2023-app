@@ -52,6 +52,7 @@ pub fn Endpoint(comptime Authenticator: type) type {
                 const local_path = p[6..];
 
                 try r.setHeader("Cache-Control", "no-cache");
+                r.setStatus(zap.StatusCode.ok);
 
                 if (std.mem.eql(u8, local_path, "/login")) {
                     try r.sendFile("admin/login.html");
@@ -80,7 +81,6 @@ pub fn Endpoint(comptime Authenticator: type) type {
                 const file_path = p[1..];
                 std.debug.print("Trying to serve: {s}\n", .{file_path});
 
-                r.setStatus(zap.StatusCode.ok);
                 try r.sendFile(file_path);
             }
         }

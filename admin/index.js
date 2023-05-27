@@ -127,7 +127,9 @@ async function init() {
     var X = document.getElementById("X");
     X.onclick = on_save;
 
-    await refreshCounters();
+        setInterval(async function(){ 
+            await refreshCounters();
+        }, 5000);
     // disable back button
     // window.onbeforeunload = function() { return "Your inputs will be lost."; };
     // history.pushState(null, document.title, location.href);

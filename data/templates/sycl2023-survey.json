@@ -26,7 +26,7 @@
       "body": "Easy calibration question from **Loris**.\n\n_(If you answer correctly, you qualify for a game of secret hitler, his favorite board game.)_",
       "please_answer_msg": "Please answer the question.",
       "questions": {
-        "Loris": {
+        "Loris' recursive calibration": {
           "Question": "If this question had a correct answer and you were to answer uniformly at random, what are the chances you would answer correctly?",
           "QType": "check_vertical",
           "options": [
@@ -39,7 +39,7 @@
       }
     },
     "next_button": "Continue",
-    "next_task": 300
+    "next_task": 200
   },
   "200": {
     "taskdesc": "Zig-Role",
@@ -50,7 +50,7 @@
       "body": "To get started, we would like to ask you a few questions about yourself.",
       "please_answer_msg": "Please answer the question.",
       "questions": {
-        "Role": {
+        "Zig community role": {
           "Question": "What best describes your role in the Zig community?",
           "QType": "check_vertical",
           "options": [
@@ -76,7 +76,7 @@
       "body": "Please let your choice indicate where your answer fits on the awesomeness scpectrum:\n\n1 .. MEH\n\n4 .. neutral\n\n7 .. totally AWESOME!  **<-- recommended answer**", 
       "please_answer_msg": "Please answer all questions.",
       "questions": {
-        "Experience": {
+        "SYCL Experience Awesomness": {
           "Question": "How are you liking the SYCL 2023 **experience** so far?",
           "QType": "check_horizontal",
           "show_dividers": true,
@@ -93,7 +93,7 @@
           ],
           "show_option_labels": true
         },
-        "Location": {
+        "Location Awesomness": {
           "Question": "How are you enjoying the conference **location** so far?",
           "QType": "check_horizontal",
           "show_dividers": true,
@@ -110,7 +110,7 @@
           ],
           "show_option_labels": true
         },
-        "Talks": {
+        "Talks Awesomness": {
           "Question": "How are you liking the conference **talks** so far?",
           "QType": "check_horizontal",
           "show_dividers": true,
@@ -127,7 +127,7 @@
           ],
           "show_option_labels": true
         },
-        "Weather": {
+        "Weather Awesomness": {
           "Question": "How are you liking the **weather** today?",
           "QType": "check_horizontal",
           "show_dividers": true,

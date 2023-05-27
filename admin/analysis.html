@@ -95,7 +95,7 @@
                 data: {
                     labels: Object.keys(answerCounts),
                     datasets: [{
-                        label: 'Number of participants',
+                        label: null,
                         data: Object.values(answerCounts),
                         backgroundColor: barColors, // Use dynamic colors for each bar
                         // borderColor: 'rgba(0, 0, 0, 1)',
@@ -106,6 +106,9 @@
                 options: {
                     responsive: true,
                     plugins: {
+                        legend: {
+                            display: false  // hide the dataset label
+                        },
                         datalabels: {
                             color: 'black',
                             formatter: function(value, context) {
