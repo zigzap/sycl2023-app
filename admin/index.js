@@ -126,6 +126,7 @@ async function init() {
     x.innerHTML = '<a id="X" style="color:4ccaf4" href="#" >SAVE DATA TO TAPE</a>'
     var X = document.getElementById("X");
     X.onclick = on_save;
+            await refreshCounters();
 
         setInterval(async function(){ 
             await refreshCounters();
