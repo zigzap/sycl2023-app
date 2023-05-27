@@ -33,6 +33,9 @@
 .lightblue {
     border-color: #4ccaf4;
 }
+.red {
+    border-color: #cd192d;
+}
 
 </style>
 
@@ -57,7 +60,7 @@
             <div style="margin-bottom:4rem" >
                 <h1 style="color:f7a41d;">SYCL Survey Console</h1>
             </div>
-            <div style="border-radius: 15px; border-color:#cd192d; border:10px solid;background-color:#808080; width:fit-content; padding:30px; padding-left:50px; padding-right:50px;">
+            <div style="border-radius: 30px; border-color:#cd192d; border:10px solid;background-color:#808080; width:fit-content; padding:30px; padding-left:50px; padding-right:50px;">
                 <p style="color:black;"> 
                     <span id="total_count" style="color:#4ccaf4; font-size: 64">000</span>
                     <span style="font-size: 64; color:#404040;">/</span> 
@@ -69,10 +72,14 @@
                     <span> total / finished / active </span> 
                 </p>
             </div>
+
+            <!-- button links -->
             <div style="margin-top:8rem">
                 <span class="buttonlink lightblue"> <a id="SAVE"></a> </span>
                 <span style="margin-left:3rem"></span>
-                <span class="buttonlink yellow"><a style="color:yellow" href="/admin/analysis.html">SHOW ME THE DATA</a></span>
+                <span class="buttonlink yellow"> <a href="/admin/list" style="color:yellow" download="participants.json">DOWNLOAD</a> </span>
+                <span style="margin-left:3rem"></span>
+                <span class="buttonlink red"><a style="color:#cd192d" href="/admin/analysis.html">SHOW ME THE STATS</a></span>
             </div>
         </center>
 

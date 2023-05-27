@@ -8,6 +8,23 @@ export function loadInitialTask(callback) {
     .then(res=>{callback(res);});
 }
 
+export function finalPost(userid, taskid, appdata_update) {
+    console.log("finalPost params:", userid, taskid, appdata_update);
+    const url = `/sycl-api/tasks/${taskid}?userid=${userid}`;
+    fetch(url,
+        {
+            method: 'POST',
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(appdata_update)
+        }
+    )
+    .then(data=>{return data.json()})
+    .then(res=>{console.log(res); return;});
+}
+
 export function loadUserTask(userid, taskid, appdata_update, callback) {
     console.log("loadUserTask params:", userid, taskid, appdata_update, callback);
     const url = `/sycl-api/tasks/${taskid}?userid=${userid}`;

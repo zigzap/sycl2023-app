@@ -105,7 +105,18 @@ async function on_save() {
     utils.showToast(JSON.stringify(data));
 }
 
+function leftPadZeros(value) {
+    return ('000' + value).slice(-3);
+}
 
+async function refreshCounters() {
+    const response = await fetch("/admin/count");
+    const data = await response.json();
+    console.log(data);
+    document.getElementById("total_count").innerHTML = leftPadZeros(data.total);
+    document.getElementById("finished_count").innerHTML = leftPadZeros(data.finished);
+    document.getElementById("active_count").innerHTML = leftPadZeros(data.active);
+}
 
 async function init() {
     state.current_task_id = 0;
@@ -115,6 +126,8 @@ async function init() {
     x.innerHTML = '<a id="X" style="color:4ccaf4" href="#" >SAVE DATA TO TAPE</a>'
     var X = document.getElementById("X");
     X.onclick = on_save;
+
+    await refreshCounters();
     // disable back button
     // window.onbeforeunload = function() { return "Your inputs will be lost."; };
     // history.pushState(null, document.title, location.href);

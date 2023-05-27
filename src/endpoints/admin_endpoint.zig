@@ -141,21 +141,28 @@ pub fn Endpoint(comptime Authenticator: type) type {
                     r.sendJson("{ \"status\": \"not found\"}") catch return;
                 }
             } else if (std.mem.endsWith(u8, path, "/count")) {
-                var buf: [128]u8 = undefined;
-                if (std.fmt.bufPrint(&buf,
-                    \\ {{
-                    \\    "count" : {d}
-                    \\ }}
-                , .{self.participants.current_participant_id})) |json| {
-                    r.sendJson(json) catch return;
-                } else |err| {
-                    std.debug.print("    count error: {any}\n", .{err});
-                    r.setStatus(.not_found);
-                    r.sendJson("{ \"status\": \"not found\"}") catch return;
-                }
+                try self.countParticipants(r);
             }
             r.setStatus(.not_found);
             r.sendJson("{ \"status\": \"no path\"}") catch return;
+        }
+
+        fn countParticipants(self: *Self, r: zap.SimpleRequest) !void {
+            const countStats = self.participants.statCounters();
+
+            var buf: [1024]u8 = undefined;
+            const json = try std.fmt.bufPrint(&buf,
+                \\ {{
+                \\    "active": {d},
+                \\    "finished" : {d},
+                \\    "total" : {}
+                \\ }}
+            , .{
+                countStats.active,
+                countStats.finished,
+                countStats.total,
+            });
+            try r.sendJson(json);
         }
 
         fn saveParticipants(self: *Self, json: []const u8) !void {

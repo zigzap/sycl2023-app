@@ -33,7 +33,9 @@
 </head>
 <body>
     <center>
-        <h1>RESULTS ARE IN!</>
+        <h1>RESULTS ARE IN!</h1>
+        <h2 id="counter"></h2>
+
     </center>
     <div id="charts"></div>
     <script>
@@ -44,6 +46,10 @@
 
         const response = await fetch("/admin/list");
         const data = await response.json();
+        const response_counters = await fetch("/admin/count");
+        const counters = await response_counters.json();
+        document.getElementById("counter").innerText = "(" + counters.total + " participants)"
+
 
         var questions = Object.keys(data[0].appstate).filter(key => key != 'agreement_checked_at' && key != 'dataprotection_checked_at');
         var colors = ['rgba(255, 99, 132, 0.5)', 'rgba(54, 162, 235, 0.5)', 'rgba(255, 206, 86, 0.5)', 'rgba(75, 192, 192, 0.5)', 'rgba(153, 102, 255, 0.5)', 'rgba(255, 159, 64, 0.5)'];
@@ -53,6 +59,10 @@
             var answerCounts = {};
             data.forEach(function(participant) {
                 var answer = participant.appstate[question];
+                if (answer == undefined) {
+                    return;
+                }
+
                 if (answerCounts[answer] == null) {
                     answerCounts[answer] = 1;
                 } else {

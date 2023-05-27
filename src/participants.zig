@@ -138,6 +138,13 @@ pub const Participant = struct {
         }
     }
 
+    pub fn isFinal(self: *const Participant) bool {
+        if (self.appstate.object.get("finished")) |_| {
+            return true;
+        }
+        return false;
+    }
+
     pub fn jsonStringify(
         self: *const Participant,
         options: std.json.StringifyOptions,
@@ -284,6 +291,28 @@ pub fn jsonStringify(
     }
     try out_stream.writeByte(']');
     return;
+}
+
+pub const statCounts = struct {
+    active: usize = 0,
+    finished: usize = 0,
+    total: usize = 0,
+};
+
+pub fn statCounters(self: *Self) statCounts {
+    var ret = statCounts{};
+    self.lock.lock();
+    defer self.lock.unlock();
+    for (0..self.current_participant_id) |i| {
+        ret.total += 1;
+        const participant = self.participants[i];
+        if (participant.isFinal()) {
+            ret.finished += 1;
+        } else {
+            ret.active += 1;
+        }
+    }
+    return ret;
 }
 
 test "participants" {

@@ -2,7 +2,7 @@ import { show_welcome } from "./screens/welcome_screen.js?version=0";
 import { show_thankyou } from "./screens/thankyou_screen.js?version=0";
 import { show_qscreen } from "./screens/qscreen.js?version=0";
 import { show_cheating } from "./screens/cheatscreen.js?version=0";
-import { loadInitialTask, loadUserTask, reloadTaskTemplate } from "./api.js?version=0";
+import { loadInitialTask, loadUserTask, finalPost, reloadTaskTemplate } from "./api.js?version=0";
 import { setCookie, getCookie } from "./cookies.js?version=0";
 
 var eScreen = document.getElementById("screen");
@@ -166,8 +166,14 @@ function submit(appdata) {
     // post update to server and get next task
     setCookie("SYCL2023", "agreed", 3);
     let next = state.task.next_task;
-    let final = state.task.final;
+    let final = state.task.final_task;
     console.log("final is", final);
+    console.log("state is", state);
+
+    if(final === true) {
+        finalPost(state.userid, state.current_task_id, {finished: true});
+        return;
+    }
 
     if (final === true || next === null || next === undefined) return;
 
