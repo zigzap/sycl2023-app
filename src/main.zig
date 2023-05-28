@@ -58,7 +58,10 @@ pub fn main() !void {
         } else |err| {
             switch (err) {
                 error.FileNotFound => |e| std.debug.print("File not found: {any}\n", .{e}),
-                else => |e| std.debug.print("File parsing error: {any}\n", .{e}),
+                else => |e| {
+                    std.debug.print("File parsing error: {any}\n", .{e});
+                    return e;
+                },
             }
             return;
         }

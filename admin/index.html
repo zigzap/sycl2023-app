@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="index.css">
 
         <!-- Add icon library -->
-        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="/admin/font-awesome.min.css">
 
         <!-- use showdown for markdown rendering -->
@@ -25,16 +25,56 @@
     background-color: #181a18;
     width:fit-content;
     padding: 30px;
+    font-size: 16;
+}
+
+.yellow-lg {
+    border-color: yellow;
+    color: yellow;
+    font-size: 64;
+    text-shadow: 2px 2px black;
+    text-shadow: 2px 2px #202020;
+}
+.lightblue-lg {
+    border-color: #4ccaf4;
+    color: #4ccaf4;
+    font-size: 64;
+    text-shadow: 2px 2px #202020;
+}
+.red-lg {
+    border-color: #cd192d;
+    color: #cd192d;
+    font-size: 64;
+    text-shadow: 2px 2px black;
+    text-shadow: 2px 2px #202020;
+}
+.separator-lg {
+    color:#404040;
+    font-size: 64;
 }
 
 .yellow {
+    color: yellow;
     border-color: yellow;
+    text-shadow: 1px 1px #202020;
 }
-.lightblue {
+.save-to-tape {
+    color: #4ccaf4;
     border-color: #4ccaf4;
 }
+.lightblue {
+    color: #4ccaf4;
+    border-color: #4ccaf4;
+    text-shadow: 1px 1px #202020;
+}
 .red {
+    color: #cd192d;
     border-color: #cd192d;
+    text-shadow: 1px 1px #202020;
+}
+
+a {
+    font-size: 16;
 }
 
 </style>
@@ -62,28 +102,29 @@
             </div>
             <div style="border-radius: 30px; border-color:#cd192d; border:10px solid;background-color:#808080; width:fit-content; padding:30px; padding-left:50px; padding-right:50px;">
                 <p style="color:black;"> 
-                    <span id="total_count" style="color:#4ccaf4; font-size: 64">000</span>
-                    <span style="font-size: 64; color:#404040;">/</span> 
-                    <span id="finished_count" style="color:yellow; font-size: 64">003</span>
-                    <span style="font-size: 64; color:#404040">/</span> 
-                    <span id="active_count" style="color:#cd192d; font-size: 64">000</span>
+                    <span id="total_count" class="lightblue-lg">000</span>
+                    <span class="separator-lg">/</span> 
+                    <span id="finished_count" class="yellow-lg">003</span>
+                    <span class="separator-lg">/</span> 
+                    <span id="active_count" class="red-lg">000</span>
                 </p>
                 <p>
-                    <span style="color:4ccaf4;"> total </span> 
+                    <span class="lightblue"> total </span> 
                     <span> / </span> 
-                    <span style="color:yellow;"> finished </span> 
+                    <span class="yellow"> finished </span> 
                     <span> / </span> 
-                    <span style="color:#cd192d;"> active </span> 
+                    <span class="red"> active </span> 
                 </p>
             </div>
 
             <!-- button links -->
-            <div style="margin-top:8rem">
-                <span class="buttonlink lightblue"> <a id="SAVE"></a> </span>
-                <span style="margin-left:3rem"></span>
-                <span class="buttonlink yellow"> <a href="/admin/list" style="color:yellow" download="participants.json">DOWNLOAD</a> </span>
-                <span style="margin-left:3rem"></span>
-                <span class="buttonlink red"><a style="color:#cd192d" href="/admin/analysis.html">SHOW ME THE STATS</a></span>
+            <div style="margin-top:6rem;"></div>
+            <div style="line-height: 1.5rem;display:flex; align-items: center;justify-content:center;">
+                <div class="lightblue buttonlink"><i class="fa fa-database" aria-hidden="true"></i> <a class="save-to-tape" id="SAVE"></a></div>
+                <div style="margin-left:1rem"></div>
+                <div class="yellow buttonlink"><i class="fa fa-download" aria-hidden="true"></i> <a class="yellow" href="/admin/list" download="participants.json">DOWNLOAD</a></div>
+                <div style="margin-left:1rem"></div>
+                <div class="red buttonlink"><i class="fa fa-bar-chart" aria-hidden="true"></i> <a class="red" href="/admin/analysis.html">SHOW ME THE STATS</a></div>
             </div>
         </center>
 

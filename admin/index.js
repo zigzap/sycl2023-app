@@ -123,7 +123,7 @@ async function init() {
     state.userid = "null";
 
     var x = document.getElementById("SAVE");
-    x.innerHTML = '<a id="X" style="color:4ccaf4" href="#" >SAVE DATA TO TAPE</a>'
+    x.innerHTML = '<a id="X" class="save-to-tape" href="#" >SAVE DATA TO TAPE</a>'
     var X = document.getElementById("X");
     X.onclick = on_save;
             await refreshCounters();
