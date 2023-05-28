@@ -4,7 +4,7 @@
     "tasktype": "welcome",
     "taskbody": {
       "heading": "Welcome to the SYCL 2023 Survey",
-      "body": "Hello and welcome to an online survey conducted by **@renerocksai** from the Nuremberg Institute for Market Decisions, a not-for-profit organization for researching consumer and marketing decisions, as well as the founder and anchor shareholder of GfK SE. We think you wanted to know. \n\n With your help, we aim to investigate how `SYCL 2023` resonates with its attendees. Participation is voluntary.\n\nThe data collected will be anonymized and used exclusively for research purposes, and all analyses will be carried out in such a way that no conclusions from the results can be drawn about the individual taking part.\n\nThe survey will take about 5 minutes of your time. You will be asked questions about your experience at `SYCL 2023`.\n\n### To participate in the study, please note the following:\n\n- Please participate in the survey **without interruption**. We have set a **maximum time of 5 minutes** for each respondent to participate.\n\n- You can **participate only once**. Participating more than once would be considered cheating.\n\n- Please **do not use the \"Back\"-button of your browser**. Be brave! Blaze through the survey in one go without looking back!\n\nThank you very much for your support.\n\n`If you would still like to participate in this study, please confirm the statements below and then click \"Continue\"`.",
+      "body": "Hello and welcome to an online survey conducted by **@renerocksai** from the Nuremberg Institute for Market Decisions, a not-for-profit organization for researching consumer and marketing decisions, as well as the founder and anchor shareholder of GfK SE. We think you wanted to know that. \n\n With your help, we aim to investigate how `SYCL 2023` resonates with you, the attendees. Participation is voluntary.\n\nThe data collected will be anonymized and used exclusively for research purposes, and all analyses will be carried out in such a way that no conclusions from the results can be drawn about the individual taking part.\n\nThe survey will take about 5 minutes of your time. You will be asked questions about your experience at `SYCL 2023`.\n\n### To participate in the study, please note the following:\n\n- Please participate in the survey **without interruption**. We have set a **maximum time of 5 minutes** for each respondent to participate.\n\n- You can **participate only once**. Participating more than once would be considered cheating.\n\n- Please **do not use the \"Back\"-button of your browser**. Be brave! Blaze through the survey in one go without looking back!\n\nThank you very much for your support.\n\n`If you would still like to participate in this study, please confirm the statements below and then click \"Continue\"`.",
       "agreement_check_caption": "Yes, I would like to participate in the study",
       "please_check_agreement_msg": "Please agree to the study participation",
       "data_protection_heading": "Data protection and privacy",
@@ -41,6 +41,7 @@
     "next_button": "Continue",
     "next_task": 200
   },
+
   "200": {
     "taskdesc": "Zig-Role",
     "tasktype": "Q",
@@ -51,7 +52,7 @@
       "please_answer_msg": "Please answer the question.",
       "questions": {
         "Zig community role": {
-          "Question": "What best describes your role in the Zig community?",
+          "Question": "What best describes **your role in the Zig community**?",
           "QType": "check_vertical",
           "options": [
             "Gotta go fast!",
@@ -65,15 +66,94 @@
       }
     },
     "next_button": "Continue",
+    "next_task": 210
+  },
+
+  "210": {
+    "taskdesc": "General Programming Experience",
+    "tasktype": "Q",
+    "taskbody": {
+      "shuffle_questions": true,
+      "heading": null,
+      "body": "Next, we would like to know a bit more about your **programming experience**.",
+      "please_answer_msg": "Please answer the question.",
+      "questions": {
+        "Programming experience": {
+          "Question": "How much programming experience do you have?",
+          "QType": "check_vertical",
+          "options": [
+            "up to 1 year",
+            "2 to 4 years",
+            "5 to 10 years",
+            "10 or more years",
+            "I do not program"
+          ]
+        }
+      }
+    },
+    "next_button": "Continue",
+    "next_task": 220
+  },
+
+  "220": {
+    "taskdesc": "ZIG Programming Experience",
+    "tasktype": "Q",
+    "taskbody": {
+      "shuffle_questions": true,
+      "heading": null,
+      "body": "",
+      "please_answer_msg": "Please answer the question.",
+      "questions": {
+        "ZIG experience": {
+          "Question": "How much **ZIG** experience do you have?",
+          "QType": "check_vertical",
+          "options": [
+            "up to 1 year",
+            "2 to 4 years",
+            "3 to 5 years",
+            "5 or more years",
+            "I STILL do not program"
+          ]
+        }
+      }
+    },
+    "next_button": "Continue",
+    "next_task": 230
+  },
+
+  "230": {
+    "taskdesc": "Job involves programming",
+    "tasktype": "Q",
+    "taskbody": {
+      "shuffle_questions": true,
+      "heading": null,
+      "body": "",
+      "please_answer_msg": "Please answer the question.",
+      "questions": {
+        "Programming Job": {
+          "Question": "Is programming **part of your job**?",
+          "QType": "check_vertical",
+          "options": [
+            "Yes",
+            "Sometimes",
+            "No",
+            "OK, I'm going to pick up programming now"
+          ]
+        }
+      }
+    },
+    "next_button": "Continue",
     "next_task": 300
   },
+
+
   "300": {
     "taskdesc": "SYCL-liking",
     "tasktype": "Q",
     "taskbody": {
       "shuffle_questions": false,
       "heading": null,
-      "body": "Please let your choice indicate where your answer fits on the awesomeness scpectrum:\n\n1 .. MEH\n\n4 .. neutral\n\n7 .. totally AWESOME!  **<-- recommended answer**", 
+      "body": "**Awesome!** Now we'd like to know more about **your conference experience**.\n\nPlease let your choice indicate where your answer fits on the awesomeness scpectrum:\n\n1 .. MEH\n\n4 .. neutral\n\n7 .. totally AWESOME!  **<-- recommended answer**", 
       "please_answer_msg": "Please answer all questions.",
       "questions": {
         "SYCL Experience Awesomness": {
@@ -147,10 +227,256 @@
       }
     },
     "next_button": "Continue",
-    "next_task": 1000
+    "next_task": 400
   },
 
 
+  "400": {
+    "taskdesc": "Looking forward",
+    "tasktype": "Q",
+    "taskbody": {
+      "shuffle_questions": false,
+      "heading": null,
+      "body": "**You're doing great!** We're almost done. We'd just like to know how we could improve future SYCL conferences.\n\nPlease let your choice indicate whether you would prefer less or more of the following items:\n\n1 .. LESS\n\n4 .. neutral\n\n7 .. MORE!", 
+      "please_answer_msg": "Please answer all questions.",
+      "questions": {
+        "More Days": {
+          "Question": "**DAYS** (longer conference!)",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "LESS",
+          "scale_right": "MORE",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        },
+        "More Breaks": {
+          "Question": "**BREAKS** (longer breaks)",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "LESS",
+          "scale_right": "MORE",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        },
+        "PARTY": {
+          "Question": "**PARTY**",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "LESS",
+          "scale_right": "MORE",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        },
+        "ZIG talks": {
+          "Question": "**ZIG** talks",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "LESS",
+          "scale_right": "MORE",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        },
+        "SYCL talks": {
+          "Question": "**SYCL** talks",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "LESS",
+          "scale_right": "MORE",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        },
+        "Howto Open Source": {
+          "Question": "How to: **Open Source** Talks",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "LESS",
+          "scale_right": "MORE",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        },
+        "Lovable Software Startup Financing": {
+          "Question": "Lovable Software Startup **Financing**",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "LESS",
+          "scale_right": "MORE",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        },
+        "More Workshops": {
+          "Question": "More **Workshops**",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "LESS",
+          "scale_right": "MORE",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        },
+        "Social Events": {
+          "Question": "**Social Events** (gatherings)",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "LESS",
+          "scale_right": "MORE",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        },
+        "Time for collaboration": {
+          "Question": "Time for **collaboration** (table time)",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "LESS",
+          "scale_right": "MORE",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        },
+        "Secret Hitler": {
+          "Question": "Secret Hitler (**board game**)",
+          "QType": "check_horizontal",
+          "show_dividers": true,
+          "scale_left": "LESS",
+          "scale_right": "MORE",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "show_option_labels": true
+        }
+      }
+    },
+    "next_button": "Continue",
+    "next_task": 500
+  },
+
+
+  "500": {
+    "taskdesc": "Don't like",
+    "tasktype": "Q",
+    "taskbody": {
+      "shuffle_questions": false,
+      "heading": null,
+      "body": "**Phew!** Last question.", 
+      "please_answer_msg": "Please answer the question.",
+      "questions": {
+        "Don't Like": {
+          "Question": "Is there anything you don't like about the conference?",
+          "QType": "check_vertical",
+          "options": [
+            "No"
+          ]
+        }
+      }
+    },
+    "next_button": "Continue",
+    "next_task": 510
+  },
+
+  "510": {
+    "taskdesc": "Don't like, pt. 2",
+    "tasktype": "Q",
+    "taskbody": {
+      "shuffle_questions": false,
+      "heading": null,
+      "body": "Awesome! Just checking...", 
+      "please_answer_msg": "Please answer the question.",
+      "questions": {
+        "Final answer": {
+          "Question": "Is this your **final** answer?",
+          "QType": "check_vertical",
+          "options": [
+            "Yes!"
+          ]
+        }
+      }
+    },
+    "next_button": "Continue",
+    "next_task": 1000
+  },
 
 
   "1000": {
@@ -159,7 +485,7 @@
     "taskdesc": "The end",
     "taskbody": {
       "heading": "",
-      "body": "Thank you very much for your participation in our survey.",
+      "body": "**That's it!** Thank you very much for your participation in our survey! We're sad to see you go but it's OK to close this window now. Let's check out the results!",
       "redirect_url": null
     },
     "next_button": null,
