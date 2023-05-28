@@ -52,7 +52,7 @@ pub fn init(settings: Settings) !Self {
 
     // try to find the frontend subdir = endpoint_path without leading /
     const frontend_dir_stat = try root_dir.statFile(settings.endpoint_path[1..]);
-    if (!(frontend_dir_stat.kind == .Directory)) {
+    if (!(frontend_dir_stat.kind == .directory)) {
         return error.NotADirectory;
     }
 

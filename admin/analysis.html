@@ -90,7 +90,7 @@
             // Create the chart
             var ctx = canvas.getContext('2d');
             var totalParticipants = data.length;
-            new Chart(ctx, {
+            var chart =new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: Object.keys(answerCounts),
