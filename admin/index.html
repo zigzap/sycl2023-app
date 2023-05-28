@@ -77,20 +77,40 @@ a {
     font-size: 16;
 }
 
+.stats-container {
+
+border-radius: 30px; border-color:#cd192d; border:10px solid;background-color:#808080; width:fit-content; padding:30px; padding-left:50px; padding-right:50px;
+}
+
+.button-container {
+line-height: 1.5rem;display:flex; align-items: center;justify-content:center;
+}
+@media screen and (max-width: 640px) {
+    .buttonlink {
+        margin: 0 auto;
+        /* width: 100%; */
+    }
+    .stats-container{
+        border-radius: 30px; 
+        border-color:#cd192d; 
+        border:10px solid;
+        background-color:#808080; 
+        width:100%; 
+        padding: 0; 
+        padding-left:0; 
+        padding-right:0;
+    }
+    .button-container {
+        display: inline-block;
+        width: 100%;
+    }
+}
+
 </style>
 
     </head>
 
     <body>
-        <div id="overlay"></div>
-        <div id="screen-container" class="basic_screen">
-            <div id="screen"> </div>
-            <div class="loader_container" id="loader"
-                style="display:none">
-                <div class="loader"></div>
-                <p>LOADING ...<p>
-            </div>
-        </div>
         <div id="snackbar"></div>
 
         <div style="text-align:right; padding-top: 20px">
@@ -100,33 +120,35 @@ a {
             <div style="margin-bottom:4rem" >
                 <h1 style="color:f7a41d;">SYCL Survey Console</h1>
             </div>
-            <div style="border-radius: 30px; border-color:#cd192d; border:10px solid;background-color:#808080; width:fit-content; padding:30px; padding-left:50px; padding-right:50px;">
-                <p style="color:black;"> 
-                    <span id="total_count" class="lightblue-lg">000</span>
-                    <span class="separator-lg">/</span> 
-                    <span id="finished_count" class="yellow-lg">003</span>
-                    <span class="separator-lg">/</span> 
-                    <span id="active_count" class="red-lg">000</span>
-                </p>
-                <p>
-                    <span class="lightblue"> total </span> 
-                    <span> / </span> 
-                    <span class="yellow"> finished </span> 
-                    <span> / </span> 
-                    <span class="red"> active </span> 
-                </p>
+            <div class="stats-container-container">
+                <div class="stats-container">
+                    <p style="color:black;"> 
+                        <span id="total_count" class="lightblue-lg">000</span>
+                        <span class="separator-lg">/</span> 
+                        <span id="finished_count" class="yellow-lg">003</span>
+                        <span class="separator-lg">/</span> 
+                        <span id="active_count" class="red-lg">000</span>
+                    </p>
+                    <p>
+                        <span class="lightblue"> total </span> 
+                        <span> / </span> 
+                        <span class="yellow"> finished </span> 
+                        <span> / </span> 
+                        <span class="red"> active </span> 
+                    </p>
+                </div>
             </div>
+        </center>
 
             <!-- button links -->
             <div style="margin-top:6rem;"></div>
-            <div style="line-height: 1.5rem;display:flex; align-items: center;justify-content:center;">
+            <div class="button-container"> 
                 <div class="lightblue buttonlink"><i class="fa fa-database" aria-hidden="true"></i> <a class="save-to-tape" id="SAVE"></a></div>
                 <div style="margin-left:1rem"></div>
                 <div class="yellow buttonlink"><i class="fa fa-download" aria-hidden="true"></i> <a class="yellow" href="/admin/list" download="participants.json">DOWNLOAD</a></div>
                 <div style="margin-left:1rem"></div>
                 <div class="red buttonlink"><i class="fa fa-bar-chart" aria-hidden="true"></i> <a class="red" href="/admin/analysis.html">SHOW ME THE STATS</a></div>
             </div>
-        </center>
 
 
         <!-- Load the script and start executing -->
