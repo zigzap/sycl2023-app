@@ -113,10 +113,8 @@ pub fn Endpoint(comptime Authenticator: type) type {
             const path = local_path;
             if (std.mem.endsWith(u8, path, "/save")) {
                 if (self.participantsToJsonAlloc()) |allocJson| {
-                    std.debug.print("    Saving to participants.json...  ", .{});
                     if (self.saveParticipants(allocJson.json)) {
                         self.allocator.free(allocJson.buffer_to_free);
-                        std.debug.print("DONE!\n", .{});
                         var buf: [128]u8 = undefined;
                         const x = try std.fmt.bufPrint(&buf, "{{ \"status\": \"OK\", \"SAVED\": {} }}", .{self.participants.current_participant_id});
                         r.sendJson(x) catch return;
@@ -166,9 +164,13 @@ pub fn Endpoint(comptime Authenticator: type) type {
         }
 
         fn saveParticipants(self: *Self, json: []const u8) !void {
+            const ts_milli = std.time.milliTimestamp();
+            const filn = try std.fmt.allocPrint(self.allocator, "participants.{}.json", .{ts_milli});
+            defer self.allocator.free(filn);
+            std.debug.print("\n\nSaving to: {s}\n\n", .{filn});
             self.io_mutex.lock();
             defer self.io_mutex.unlock();
-            const filn = "participants.json";
+
             var f = try std.fs.cwd().createFile(filn, .{});
             var buffered_writer = std.io.bufferedWriter(f.writer());
             var writer = buffered_writer.writer();

@@ -101,7 +101,9 @@ var utils = {
 
 async function on_save() {
     const response = await fetch("/admin/save");
+    console.log(response);
     const data = await response.json();
+    console.log(data);
     utils.showToast(JSON.stringify(data));
 }
 
