@@ -109,8 +109,8 @@
           "QType": "check_vertical",
           "options": [
             "up to 1 year",
-            "2 to 4 years",
-            "3 to 5 years",
+            "2 to 3 years",
+            "4 to 5 years",
             "5 or more years",
             "I STILL do not program"
           ]
