@@ -7,5 +7,7 @@ pub fn main() !void {
     var bot = Bot.init(allocator, 1, "http://127.0.0.1:5000/sycl-api");
     defer bot.deinit();
 
-    try bot.step();
+    while (bot.state != .done) {
+        try bot.step();
+    }
 }
