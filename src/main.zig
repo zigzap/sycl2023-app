@@ -52,7 +52,7 @@ pub fn main() !void {
             allocator,
             "/sycl-api/tasks", // slug
             survey_tasks_template, // task template
-            1000, // max. 1000 participants
+            10000, // max. 1000 participants
         )) |ep| {
             break :blk ep;
         } else |err| {

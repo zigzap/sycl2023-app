@@ -5,7 +5,7 @@ fn run_bot(alloc: std.mem.Allocator, number: usize) !void {
     var bot = Bot.init(alloc, number, "http://127.0.0.1:5000/sycl-api");
     defer bot.deinit();
     while (bot.state != .done) {
-        try bot.step();
+        bot.step() catch return;
     }
 }
 
@@ -16,20 +16,28 @@ pub fn main() !void {
     var allocator = gpa.allocator();
 
     var args = std.process.args();
-    var num_bots: usize = 1;
+    var num_threads: usize = 1;
     _ = args.skip();
 
-    if (args.next()) |howmany| {
-        std.debug.print("{s} BOTS\n", .{howmany});
-        num_bots = try std.fmt.parseInt(usize, howmany, 10);
+    if (args.next()) |threadcount| {
+        std.debug.print("{s} THREADS\n", .{threadcount});
+        num_threads = try std.fmt.parseInt(usize, threadcount, 10);
     }
 
-    var threads = std.ArrayList(std.Thread).init(allocator);
-    for (0..num_bots) |i| {
-        const t = try std.Thread.spawn(.{}, run_bot, .{ allocator, i });
-        try threads.append(t);
+    var repetitions: usize = 1;
+    if (args.next()) |reps| {
+        std.debug.print("{s} REPETITIONS\n", .{reps});
+        repetitions = try std.fmt.parseInt(usize, reps, 10);
     }
-    for (threads.items) |t| {
-        t.join();
+
+    for (0..repetitions) |_| {
+        var threads = std.ArrayList(std.Thread).init(allocator);
+        for (0..num_threads) |i| {
+            const t = try std.Thread.spawn(.{}, run_bot, .{ allocator, i });
+            threads.append(t) catch break;
+        }
+        for (threads.items) |t| {
+            t.join();
+        }
     }
 }
