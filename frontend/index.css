@@ -400,9 +400,9 @@ html {
 
 /* LOADER */
 .loader {
-  border: 16px solid #909090;
+  border: 4px solid #909090;
   border-radius: 50%;
-  border-top: 16px solid magenta;
+  border-top: 4px solid #f7a41d;
   width: 60px;
   height: 60px;
   margin: auto;
