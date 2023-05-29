@@ -62,9 +62,6 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
-
-    particibot.addModule("zap", zap.module("zap"));
-    particibot.linkLibrary(zap.artifact("facil.io"));
     b.installArtifact(particibot);
 
     const particibot_step = b.step("particibot", "Build particibot");
