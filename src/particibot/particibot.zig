@@ -40,4 +40,10 @@ pub fn main() !void {
             t.join();
         }
     }
+
+    // OMG, never show this to anyone until fixed 😊
+    // TODO: fix mem leak
+    if (gpa.detectLeaks() == true) {
+        std.log.err("FUUUUUUCK!\n", .{});
+    }
 }

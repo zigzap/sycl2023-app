@@ -14,6 +14,14 @@ const participants_json_filn = "participants.json";
 const FRONTEND_SLUG = "/frontend";
 const ADMIN_SLUG = "/admin";
 
+// go to /frontend per default
+fn on_default_request(r: zap.SimpleRequest) void {
+    const redirect_target = FRONTEND_SLUG ++ "/";
+    r.redirectTo(redirect_target, .found) catch |err| {
+        std.log.err("could not redirect to {s}: {any}\n", .{ redirect_target, err });
+    };
+}
+
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{
         .thread_safe = true,
@@ -35,7 +43,7 @@ pub fn main() !void {
 
     var listener = zap.SimpleEndpointListener.init(allocator, .{
         .port = 5000,
-        .on_request = null,
+        .on_request = on_default_request,
         .max_clients = 100000,
         .log = true,
     });
