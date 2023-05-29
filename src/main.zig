@@ -120,6 +120,8 @@ pub fn main() !void {
 
     // If specified on the command line, we load a previously saved participants state on startup
     var args = std.process.args();
+    // TODO: change that to: load file if ends in .json, else if "reload-latest":
+    // list, sort, pick latest, reload
     var do_load = false;
     while (args.next()) |arg| {
         if (std.mem.eql(u8, arg, "reload")) {

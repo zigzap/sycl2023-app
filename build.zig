@@ -54,6 +54,30 @@ pub fn build(b: *std.Build) void {
     run_devserver_cmd.dependOn(&run_devserver.step);
 
     //
+    // particibot
+    //
+    const particibot = b.addExecutable(.{
+        .name = "particibot",
+        .root_source_file = .{ .path = "src/particibot/particibot.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
+
+    particibot.addModule("zap", zap.module("zap"));
+    particibot.linkLibrary(zap.artifact("facil.io"));
+    b.installArtifact(particibot);
+
+    const particibot_step = b.step("particibot", "Build particibot");
+    particibot_step.dependOn(&particibot.step);
+
+    const run_particibot = b.addRunArtifact(particibot);
+    if (b.args) |args| {
+        run.addArgs(args);
+    }
+    const run_particibot_cmd = b.step("run-particibot", "Run the particibot");
+    run_particibot_cmd.dependOn(&run_particibot.step);
+
+    //
     // TESTS
     //
     const participants_test = b.addTest(.{
