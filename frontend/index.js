@@ -138,8 +138,10 @@ async function init() {
     //
     // maybe, indicate this visually somehow - maybe with the
     // snackbar?
-    reloadTaskTemplate();
-    utils.showToast("Task template reloaded. Disable this before going into production!");
+    if(false) {
+        reloadTaskTemplate();
+        utils.showToast("Task template reloaded. Disable this before going into production!");
+    }
 
     let cookie = getCookie("SYCL2023");
 
