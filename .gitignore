@@ -1,7 +1,6 @@
 zig-out/
 zig-cache/
 users.json
-passwords.txt
 participants.json
 participants.*.json
 
