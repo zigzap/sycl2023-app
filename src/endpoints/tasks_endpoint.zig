@@ -195,7 +195,7 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
 
 fn RenderContextFromParticipant(participant: *Participant) RenderContext {
     return .{
-        .participantid = @intCast(isize, participant.participantid),
+        .participantid = @intCast(participant.participantid),
         .rustOrBust = false,
     };
 }
