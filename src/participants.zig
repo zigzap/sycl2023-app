@@ -16,12 +16,11 @@ current_participant_id: usize = 0,
 participants: []Participant,
 lock: std.Thread.Mutex = .{},
 
-/// a JSON parser for the entire collection of participants
-/// we (seem to) need to keep it in memory if we want to hold on to parsed JSON
-/// values.
-json_parser: ?std.json.Parser = null,
+// if we restore, the json buf will go in there
+json_source_buf: []const u8 = undefined,
+
 /// JSON parsing result - need to hold on to this once used.
-json_parsed: ?std.json.ValueTree = null,
+json_parsed: ?std.json.Parsed(std.json.Value) = null,
 
 pub const Self = @This();
 
@@ -41,19 +40,6 @@ const ParticipantError = error{
     JsonError,
 };
 
-/// General info for /login
-/// TODO: unused in sycl app
-pub const LoginInfo = struct {
-    /// Unix time the participant landed here with a panel id
-    servertime_login: usize,
-    /// Unix time the participant landed here with a panel id, in ISO string format
-    servertime_login_iso: ?[]const u8 = null,
-    /// The time the experiment started for this participant
-    servertime_start: ?usize = null,
-    /// The time the experiment started for this participant, in ISO string format
-    servertime_start_iso: ?[]const u8 = null,
-};
-
 /// A single participant as constructed by `newParticipant()`.
 pub const Participant = struct {
     allocator: std.mem.Allocator,
@@ -64,8 +50,10 @@ pub const Participant = struct {
     /// JSON object for dynamic storage of what the JS frontend wants to put there.
     appstate: std.json.Value = undefined,
     /// we hold on to the parsed appdata updates
-    parsers_to_deinit: std.ArrayList(*std.json.Parser) = undefined,
-    valuetrees_to_deinit: std.ArrayList(*std.json.ValueTree) = undefined,
+    values_to_deinit: std.ArrayList(*std.json.Parsed(std.json.Value)) = undefined,
+
+    /// the underlying json buffers have to be kept, because std.json.Value only has references to the buffer
+    buffers_to_deinit: std.ArrayList([]const u8) = undefined,
 
     /// Panel ID, such as: prolific ID
     panel_id: ?[]const u8 = null,
@@ -77,64 +65,49 @@ pub const Participant = struct {
             .allocator = a,
             .participantid = participantid,
             .appstate = std.json.Value{ .object = std.json.ObjectMap.init(a) },
-            .parsers_to_deinit = try std.ArrayList(*std.json.Parser).initCapacity(a, 10),
-            .valuetrees_to_deinit = try std.ArrayList(*std.json.ValueTree).initCapacity(a, 10),
+            .values_to_deinit = try std.ArrayList(*std.json.Parsed(std.json.Value)).initCapacity(a, 10),
+            .buffers_to_deinit = try std.ArrayList([]const u8).initCapacity(a, 10),
         };
     }
 
     pub fn deinit(self: *Participant) void {
-        for (self.parsers_to_deinit.items) |vt| {
+        for (self.values_to_deinit.items, 0..) |vt, i| {
+            std.debug.print("deiniting parsed json {d} {any}\n", .{ i, vt });
             vt.deinit();
+            std.debug.print("deinitED parsed json {d}\n", .{i});
             self.allocator.destroy(vt);
+            std.debug.print("destroyed parsed json {d}\n", .{i});
         }
+        self.values_to_deinit.deinit();
 
-        for (self.valuetrees_to_deinit.items, 0..) |vt, i| {
-            std.debug.print("deiniting valuetree {d} {any}\n", .{ i, vt });
-            vt.deinit();
-            std.debug.print("deinitED valuetree {d}\n", .{i});
-            self.allocator.destroy(vt);
-            std.debug.print("destroyed valuetree {d}\n", .{i});
+        for (self.buffers_to_deinit.items) |buffer| {
+            self.allocator.free(buffer);
         }
+        self.buffers_to_deinit.deinit();
 
-        self.valuetrees_to_deinit.deinit();
-        self.parsers_to_deinit.deinit();
         self.appstate.object.deinit();
     }
 
     pub fn updateAppdataFromJSON(self: *Participant, json: []const u8) !void {
-        var parser = try self.allocator.create(std.json.Parser);
-        parser.* = std.json.Parser.init(self.allocator, .alloc_always); // copy strings
+        // create the Parsed on the heap, then add it to values_to_deinit
+        var parsed: *std.json.Parsed(std.json.Value) = try self.allocator.create(std.json.Parsed(std.json.Value));
 
-        // if we can't add to the destroy stack, we need to do so ourselves
-        self.parsers_to_deinit.append(parser) catch |err| {
-            parser.deinit();
-            self.allocator.destroy(parser);
-            return err;
-        };
+        // also, keep the json buffer so strings don't become invalidated
+        const json_copy = try self.allocator.dupe(u8, json);
+        try self.buffers_to_deinit.append(json_copy);
 
-        var maybe_valueTree: ?std.json.ValueTree = try parser.parse(json);
-
-        if (maybe_valueTree) |valueTree| {
-            var alloced_value_tree = try self.allocator.create(std.json.ValueTree);
-            alloced_value_tree.* = valueTree;
-
-            // if we err out here, we need to destroy the valuetree ourselves
-            self.valuetrees_to_deinit.append(alloced_value_tree) catch |err| {
-                alloced_value_tree.deinit();
-                self.allocator.destroy(alloced_value_tree);
-                return err;
-            };
-
-            switch (alloced_value_tree.*.root) {
-                .object => |appdata| {
-                    // iterate over appdata and update participant's appdata
-                    var it = appdata.iterator();
-                    while (it.next()) |pair| {
-                        try self.appstate.object.put(pair.key_ptr.*, pair.value_ptr.*);
-                    }
-                },
-                else => return ParticipantError.JsonError,
-            }
+        parsed.* = try std.json.parseFromSlice(std.json.Value, self.allocator, json_copy, .{});
+        // add it to values_to_deinit
+        try self.values_to_deinit.append(parsed);
+        switch (parsed.value) {
+            .object => |appdata| {
+                // iterate over appdata and update participant's appdata
+                var it = appdata.iterator();
+                while (it.next()) |pair| {
+                    try self.appstate.object.put(pair.key_ptr.*, pair.value_ptr.*);
+                }
+            },
+            else => return ParticipantError.JsonError,
         }
     }
 
@@ -189,23 +162,24 @@ pub fn init(a: std.mem.Allocator, prepareHowMany: usize) !Self {
 /// the pool must be already created at this time.
 pub fn restoreStateFromJson(self: *Self, json: []const u8) !void {
     // parser needs to copy strings as the json text is likely to be freed after parsing
-    self.json_parser = std.json.Parser.init(self.allocator, .alloc_always);
-    self.json_parsed = try self.json_parser.?.parse(json);
+    self.json_source_buf = try self.allocator.dupe(u8, json);
+    self.json_parsed = try std.json.parseFromSlice(std.json.Value, self.allocator, self.json_source_buf, .{});
 
     // json_parsed is supposed to be an array
     if (self.json_parsed) |parsed| {
-        switch (parsed.root) {
+        switch (parsed.value) {
             .array => |a| {
                 // do the actual parsing
                 const l = a.items.len;
                 if (l > self.participants.len) {
                     return ParticipantError.JsonError;
                 }
-                for (parsed.root.array.items, 0..) |u, i| {
+                for (parsed.value.array.items, 0..) |u, i| {
                     self.participants[i] = try Participant.init(self.allocator, i);
                     try self.participants[i].restoreStateFromJson(u);
                 }
-                self.current_participant_id = a.items.len;
+                self.current_participant_id = l;
+                std.log.debug("READ {} participants!\n", .{l});
             },
             else => return jutils.JsonError.InvalidType_ArrayExpected,
         }
@@ -214,12 +188,6 @@ pub fn restoreStateFromJson(self: *Self, json: []const u8) !void {
 
 /// Call this to avoid mem leaks.
 pub fn deinit(self: *Self) void {
-    if (self.json_parser) |*p| {
-        p.deinit();
-    }
-    if (self.json_parsed) |*p| {
-        p.deinit();
-    }
     // deinit all participants
     var i: usize = 0;
     while (i < self.current_participant_id) : (i += 1) {
@@ -227,6 +195,12 @@ pub fn deinit(self: *Self) void {
         self.participants[i].deinit();
     }
     self.allocator.free(self.participants);
+
+    // deinit the loaded json stuff
+    if (self.json_parsed) |*p| {
+        p.deinit();
+    }
+    self.allocator.free(self.json_source_buf);
     std.debug.print("deinited all participants\n", .{});
 }
 
@@ -271,23 +245,11 @@ pub fn jsonStringify(
     out_stream: anytype,
 ) @TypeOf(out_stream).Error!void {
     try out_stream.writeByte('[');
-    var child_options = options;
-    if (child_options.whitespace.indent != .none) {
-        child_options.whitespace.indent_level += 1;
-    }
     for (0..self.current_participant_id) |i| {
         if (i != 0) {
             try out_stream.writeByte(',');
         }
-        if (child_options.whitespace.indent != .none) {
-            try child_options.whitespace.outputIndent(out_stream);
-        }
-        try self.participants[i].jsonStringify(child_options, out_stream);
-    }
-    if (self.current_participant_id != 0) {
-        if (options.whitespace.indent != .none) {
-            try options.whitespace.outputIndent(out_stream);
-        }
+        try self.participants[i].jsonStringify(options, out_stream);
     }
     try out_stream.writeByte(']');
     return;

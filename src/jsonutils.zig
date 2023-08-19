@@ -22,7 +22,7 @@ pub fn getJsonStringValue(json: std.json.Value, key: []const u8) ![]const u8 {
 pub fn getJsonUsizeValue(json: std.json.Value, key: []const u8) !usize {
     if (json.object.get(key)) |value| {
         switch (value) {
-            .integer => |i| return @intCast(usize, i),
+            .integer => |i| return @intCast(i),
             else => return JsonError.InvalidType_IntExpected,
         }
     } else {

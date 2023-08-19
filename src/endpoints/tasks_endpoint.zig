@@ -4,6 +4,8 @@ const Tasks = @import("../tasks.zig");
 const Participants = @import("../participants.zig");
 const Participant = Participants.Participant;
 
+const is_debug_build = @import("builtin").mode == std.builtin.Mode.Debug;
+
 alloc: std.mem.Allocator = undefined,
 endpoint: zap.SimpleEndpoint = undefined,
 participants: Participants = undefined,
@@ -16,7 +18,6 @@ pub const Self = @This();
 pub const RenderContext = struct {
     // put stuff in there you want to refer in the json template
     participantid: isize,
-    rustOrBust: bool,
 };
 
 pub fn init(
@@ -77,6 +78,7 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
             self.reloadTasks(r);
         }
 
+        std.log.debug("getTask 1\n", .{});
         // get participant id from query
         if (r.query) |q| {
             if (participantIdFromQuery(q)) |uid| {
@@ -86,12 +88,15 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                     return;
                 }
                 if (self.taskIdFromPath(p)) |taskid| {
-                    if (self.tasks.json_template.?.root.object.get(taskid)) |*task| {
-                        // task.dump();
+                    if (self.tasks.json_template.?.value.object.get(taskid)) |*task| {
+                        if (is_debug_build) {
+                            std.log.debug("getTask: dumping task...\n", .{});
+                            task.dump();
+                        }
                         var buf: [100 * 1024]u8 = undefined;
                         var fba = std.heap.FixedBufferAllocator.init(&buf);
                         var string = std.ArrayList(u8).init(fba.allocator());
-                        if (task.jsonStringify(.{}, string.writer())) {
+                        if (std.json.stringify(task, .{}, string.writer())) {
                             // Not mustaching, since there's nothing to mustache
                             // in this example. E.g. no differing stimulus
                             // configuration, etc.
@@ -102,9 +107,17 @@ fn getTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                             r.setStatus(.not_found);
                             r.sendJson("{ \"status\": \"not found\"}") catch return;
                         }
+                    } else {
+                        std.log.debug("template.value.object has no key `{s}`!\n", .{taskid});
+                        self.tasks.json_template.?.value.dump();
+                        std.log.debug("\n", .{});
                     }
+                } else {
+                    std.log.debug("getTask error: no taskid\n", .{});
                 }
             }
+        } else {
+            std.log.debug("getTask NO QUERY\n", .{});
         }
     }
 }
@@ -121,6 +134,7 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                 // special case: if participant id is 0 -> create new participant
                 // and communicate it back!
                 if (std.mem.eql(u8, uid, "null")) {
+                    std.log.debug("NULL -> newParticipant!!!!", .{});
                     if (self.participants.newParticipant()) |up| {
                         participant = up;
                     } else |err| {
@@ -149,22 +163,31 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                         std.debug.print("    Error cloning appdata: {any}\n", .{err});
                         return;
                     }
-                    // DEBUG
-                    var buf: [100 * 1024]u8 = undefined;
-                    var fba = std.heap.FixedBufferAllocator.init(&buf);
-                    var string = std.ArrayList(u8).init(fba.allocator());
-                    participant.jsonStringify(.{}, string.writer()) catch unreachable;
-                    std.debug.print("    participant = {s}\n\n", .{string.items});
                 }
+
+                // DEBUG
+                var pbuf: [150 * 1024]u8 = undefined;
+                var pfba = std.heap.FixedBufferAllocator.init(&pbuf);
+                var pstring = std.ArrayList(u8).init(pfba.allocator());
+                defer pstring.deinit();
+                participant.jsonStringify(.{}, pstring.writer()) catch unreachable;
+
+                if (is_debug_build) {
+                    std.debug.print("    participant = {s}\n\n", .{pstring.items});
+                }
+
                 if (self.taskIdFromPath(p)) |taskid| {
-                    if (self.tasks.json_template.?.root.object.get(taskid)) |*task| {
-                        var buf: [100 * 1024]u8 = undefined;
+                    if (self.tasks.json_template.?.value.object.get(taskid)) |*task| {
+                        var buf: [50 * 1024]u8 = undefined;
                         var fba = std.heap.FixedBufferAllocator.init(&buf);
                         var string = std.ArrayList(u8).init(fba.allocator());
+                        defer string.deinit();
                         // HACK: return list of participantid, task
                         string.writer().print("[ {d}, ", .{participant.participantid}) catch return;
-                        if (task.jsonStringify(.{}, string.writer())) {
+                        if (std.json.stringify(task, .{}, string.writer())) {
                             // close the list of [participantid, task ]
+                            string.writer().writeByte(',') catch return;
+                            string.writer().writeAll(pstring.items) catch return;
                             string.writer().writeAll("]") catch return;
                             // MUSTACHE THE STRING!!!!
                             const template = string.items;
@@ -175,6 +198,9 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
                             defer rendered.deinit();
                             if (rendered.str()) |s| {
                                 // std.time.sleep(2 * std.time.ns_per_s);
+                                if (is_debug_build) {
+                                    std.log.debug("RESPONSE: {s}\n", .{s});
+                                }
                                 r.sendJson(s) catch return;
                             } else {
                                 std.debug.print("    Error\n", .{});
@@ -195,8 +221,7 @@ fn postTask(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
 
 fn RenderContextFromParticipant(participant: *Participant) RenderContext {
     return .{
-        .participantid = @intCast(isize, participant.participantid),
-        .rustOrBust = false,
+        .participantid = @intCast(participant.participantid),
     };
 }
 
@@ -205,8 +230,8 @@ fn listTasks(self: *Self, r: zap.SimpleRequest) void {
     var buf: [100 * 1024]u8 = undefined;
     var fba = std.heap.FixedBufferAllocator.init(&buf);
     var string = std.ArrayList(u8).init(fba.allocator());
-    const t = self.tasks.json_template.?.root;
-    if (t.jsonStringify(.{}, string.writer())) {
+    const t = self.tasks.json_template.?.value;
+    if (std.json.stringify(t, .{}, string.writer())) {
         r.sendJson(string.items) catch return;
     } else |err| {
         std.debug.print("    /tasks LIST Error: {any}\n", .{err});

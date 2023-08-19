@@ -1,4 +1,4 @@
-[![](https://app.zigzap.org/buildstatus/sycl2023-app.svg)](https://app.zigzap.org/buildstatus/sycl2023-app.txt)
+![](https://github.com/zigzap/sycl2023-app/actions/workflows/check-11.yml/badge.svg)
 
 # SYCL 2023 Demo App
 
