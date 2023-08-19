@@ -112,15 +112,14 @@ fn stringify(something: anytype) !void {
 }
 
 fn parse_response(self: *Self, method: std.http.Method, response_str: []const u8) !ParseTaskResponseResult {
-    var parser = std.json.Parser.init(self.allocator, .alloc_always);
-    const valueTree = try parser.parse(response_str);
+    var parsed = try std.json.parseFromSlice(std.json.Value, self.allocator, response_str, .{});
 
     var task_object: std.json.ObjectMap = undefined;
     var user_id: ?i64 = null;
 
     switch (method) {
         .GET => {
-            switch (valueTree.root) {
+            switch (parsed.value) {
                 .object => |o| {
                     task_object = o;
                 },
@@ -130,7 +129,7 @@ fn parse_response(self: *Self, method: std.http.Method, response_str: []const u8
             }
         },
         .POST => {
-            switch (valueTree.root) {
+            switch (parsed.value) {
                 .array => |arr| {
                     if (arr.items.len != 2) return error.ParseError;
                     const maybe_userid = arr.items[0];
