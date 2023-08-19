@@ -44,6 +44,6 @@ pub fn main() !void {
     // OMG, never show this to anyone until fixed 😊
     // TODO: fix mem leak
     // if (gpa.detectLeaks() == true) {
-    //     std.log.err("FUUUUUUCK!\n", .{});
+    //     std.log.err("FCK!\n", .{});
     // }
 }
