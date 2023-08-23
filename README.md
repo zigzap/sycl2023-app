@@ -11,6 +11,11 @@ frontend, is a mess.
 **NOTE** The app won't start without a `passwords.txt` file present in its cwd.
 For that reason, I've provided one. 
 
+# The survey frontend
+
+At http://localhost:5000/frontend/ , you can take part in the survey.
+
+![](survey.png)
 
 # The admin console
 
