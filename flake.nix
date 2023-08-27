@@ -66,15 +66,16 @@
         # shell that provides zig 0.11.0 via overlay 
         # use it for just building locally, via zig build
         devShells.build = pkgs.mkShell {
-          nativeBuildInputs = with pkgs; [
-            zigpkgs."0.11.0"
-          ];
+          # nativeBuildInputs = with pkgs; [
+          #   zigpkgs."0.11.0"
+          # ];
 
           buildInputs = with pkgs; [
             # we need a version of bash capable of being interactive
             # as opposed to a bash just used for building this flake 
             # in non-interactive mode
             bashInteractive 
+            zigpkgs."0.11.0"
           ];
 
           shellHook = ''
@@ -87,11 +88,12 @@
         # For compatibility with older versions of the `nix` binary
         devShell = self.devShells.${system}.default;
 
-        defaultPackage = packages.vianda-linux;
+        defaultPackage = packages.sycl2023app-linux;
 
         # build the app with nix for LINUX (linux musl) 
         # -- change zig build below for mac for now
-        packages.vianda-linux = pkgs.stdenvNoCC.mkDerivation {
+        # nix build .#sycl2023app-linux
+        packages.sycl2023app-linux = pkgs.stdenvNoCC.mkDerivation {
           name = "sycl-app";
           version = "master";
           src = ./.;
@@ -108,29 +110,101 @@
           buildPhase = ''
             mkdir -p $out
             mkdir -p .cache/{p,z,tmp}
-            # I disabled -Dcpu=baseline because chat would be too slow with it
-            # So don't cache the outputs of this flake and install on different machines
-            # zig build install --cache-dir $(pwd)/zig-cache --global-cache-dir $(pwd)/.cache -Dcpu=baseline -Doptimize=ReleaseSafe --prefix $out
             zig build -Dtarget=x86_64-linux-musl -Dcpu=baseline install --cache-dir $(pwd)/zig-cache --global-cache-dir $(pwd)/.cache -Doptimize=ReleaseSafe --prefix $out
             cp -pr frontend $out/bin/
             cp -pr admin $out/bin/
             cp -pr data $out/bin/
             cp -p passwords.txt $out/bin/
+
+            # apparently not neccesary to link the path later in the docker image
+            # mkdir -p tmp
             '';
         };
 
+
+
+        # the following produces the exact same image size
         # note: the following only works if you build on linux I guess
-        packages.docker = pkgs.dockerTools.buildLayeredImage { # helper to build Docker image
-          name = "vianda-linux";                               # give docker image a name
-          tag = "latest";                                      # provide a tag
-          contents = [ packages.vianda-linux ];
+        # nix build .#docker
+        packages.docker = pkgs.dockerTools.buildImage { # helper to build Docker image
+          name = "sycl2023app";                         # give docker image a name
+          tag = "latest";                               # provide a tag
+          created = "now";
+
+          copyToRoot = pkgs.buildEnv {
+            name = "image-root";
+            paths = [ packages.sycl2023app-linux ];
+            pathsToLink = [ "/bin" "/tmp"];
+          };
+
+          # facil.io needs a /tmp
+          # update: pathsToLink /tmp above seems to do the trick
+
           config = {
-            Cmd = [ "${packages.vianda-linux}/$out/sycl2023app" ];
+
+            Cmd = [ "/bin/sycl2023app" ];
+            WorkingDir = "/bin";
+
             ExposedPorts = {
               "5000/tcp" = {};
             };
+
           };
         };
+
+        # this one with runAsRoot needs qemu but produces the same size as above
+        # # note: the following only works if you build on linux I guess
+        # # nix build .#docker
+        # packages.docker = pkgs.dockerTools.buildImage { # helper to build Docker image
+        #   name = "sycl2023app";                          # give docker image a name
+        #   tag = "latest";                                      # provide a tag
+        #
+        #   # facil.io needs a /tmp
+        #   runAsRoot = ''
+        #     mkdir /tmp
+        #     chmod 1777 /tmp
+        #   '';
+        #
+        #   config = {
+        #
+        #     Cmd = [ "${packages.sycl2023app-linux}/bin/sycl2023app" ];
+        #     WorkingDir = "${packages.sycl2023app-linux}/bin";
+        #
+        #     ExposedPorts = {
+        #       "5000/tcp" = {};
+        #     };
+        #
+        #   };
+        # };
+
+        # buildLayeredImage creates huge images > 1 GB for us
+        # # note: the following only works if you build on linux I guess
+        # # nix build .#docker
+        # packages.docker = pkgs.dockerTools.buildLayeredImage { # helper to build Docker image
+        #   name = "sycl2023app-linux";                          # give docker image a name
+        #   tag = "latest";                                      # provide a tag
+        #   contents = [ 
+        #     packages.sycl2023app-linux 
+        #   ];
+        #
+        #   fakeRootCommands  = ''
+        #     mkdir /tmp
+        #     chmod 1777 /tmp
+        #   '';
+        #
+        #   enableFakechroot = true;
+        #
+        #   config = {
+        #
+        #     Cmd = [ "${packages.sycl2023app-linux}/bin/sycl2023app" ];
+        #     WorkingDir = "${packages.sycl2023app-linux}/bin";
+        #
+        #     ExposedPorts = {
+        #       "5000/tcp" = {};
+        #     };
+        #
+        #   };
+        # };
 
 
       }
