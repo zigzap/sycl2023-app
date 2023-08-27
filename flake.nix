@@ -125,7 +125,11 @@
 
         # the following produces the exact same image size
         # note: the following only works if you build on linux I guess
-        # nix build .#docker
+        # 
+        # Usage:
+        #    nix build .#docker
+        #    docker load < result
+        #    docker run -p5000:5000 sycl-app:lastest
         packages.docker = pkgs.dockerTools.buildImage { # helper to build Docker image
           name = "sycl2023app";                         # give docker image a name
           tag = "latest";                               # provide a tag
@@ -133,7 +137,7 @@
 
           copyToRoot = pkgs.buildEnv {
             name = "image-root";
-            paths = [ packages.sycl2023app-linux ];
+            paths = [ packages.sycl2023app-linux.out ];  # .out seems to not make a difference
             pathsToLink = [ "/bin" "/tmp"];
           };
 
