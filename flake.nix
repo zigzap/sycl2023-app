@@ -87,13 +87,11 @@
         # For compatibility with older versions of the `nix` binary
         devShell = self.devShells.${system}.default;
 
-        defaultPackage = packages.vianda;
+        defaultPackage = packages.vianda-linux;
 
-        # build the app with nix, for your LOCAL machine
-        # (linux musl) -- change zig build below for mac
-        # we deliberately don't -Dcpu=baseline for now
-        # so the executable might not run on other CPUs
-        packages.vianda = pkgs.stdenvNoCC.mkDerivation {
+        # build the app with nix for LINUX (linux musl) 
+        # -- change zig build below for mac for now
+        packages.vianda-linux = pkgs.stdenvNoCC.mkDerivation {
           name = "sycl-app";
           version = "master";
           src = ./.;
@@ -113,13 +111,28 @@
             # I disabled -Dcpu=baseline because chat would be too slow with it
             # So don't cache the outputs of this flake and install on different machines
             # zig build install --cache-dir $(pwd)/zig-cache --global-cache-dir $(pwd)/.cache -Dcpu=baseline -Doptimize=ReleaseSafe --prefix $out
-            zig build -Dtarget=x86_64-linux-musl install --cache-dir $(pwd)/zig-cache --global-cache-dir $(pwd)/.cache -Doptimize=ReleaseSafe --prefix $out
+            zig build -Dtarget=x86_64-linux-musl -Dcpu=baseline install --cache-dir $(pwd)/zig-cache --global-cache-dir $(pwd)/.cache -Doptimize=ReleaseSafe --prefix $out
             cp -pr frontend $out/bin/
             cp -pr admin $out/bin/
             cp -pr data $out/bin/
             cp -p passwords.txt $out/bin/
             '';
         };
+
+        # note: the following only works if you build on linux I guess
+        packages.docker = pkgs.dockerTools.buildLayeredImage { # helper to build Docker image
+          name = "vianda-linux";                               # give docker image a name
+          tag = "latest";                                      # provide a tag
+          contents = [ packages.vianda-linux ];
+          config = {
+            Cmd = [ "${packages.vianda-linux}/$out/sycl2023app" ];
+            ExposedPorts = {
+              "5000/tcp" = {};
+            };
+          };
+        };
+
+
       }
     );
   
