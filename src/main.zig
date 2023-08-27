@@ -4,6 +4,7 @@ const TasksEndpoint = @import("endpoints/tasks_endpoint.zig");
 const FrontendEndpoint = @import("endpoints/frontend_endpoint.zig");
 const AdminEndpoint = @import("endpoints/admin_endpoint.zig");
 const PWAuthenticator = @import("pwauth.zig");
+const bundledOrLocalFilePathOwned = @import("maybebundledfile.zig").bundledOrLocalFilePathOwned;
 
 const survey_tasks_template = "data/templates/sycl2023-survey.json";
 
@@ -74,6 +75,7 @@ pub fn main() !void {
             return;
         }
     };
+    defer tasksEndpoint.deinit();
 
     // /frontend
     //
@@ -84,7 +86,6 @@ pub fn main() !void {
     //
     var frontendEndpoint = try FrontendEndpoint.init(.{
         .allocator = allocator,
-        .www_root = ".",
         .endpoint_path = FRONTEND_SLUG,
         .index_html = FRONTEND_SLUG ++ "/index.html",
     });
@@ -100,14 +101,16 @@ pub fn main() !void {
 
     // first, create the UserPassword Authenticator from the passwords file
     const pw_filn = "passwords.txt";
+    const pw_filp = try bundledOrLocalFilePathOwned(allocator, pw_filn);
+    defer allocator.free(pw_filp);
     var pw_authenticator = PWAuthenticator.init(
         allocator,
-        pw_filn,
+        pw_filp,
         ADMIN_SLUG ++ "/login",
     ) catch |err| {
         std.debug.print(
-            "ERROR: Could not read " ++ pw_filn ++ ": {any}\n",
-            .{err},
+            "ERROR: Could not read {s}: {any}\n",
+            .{ pw_filp, err },
         );
         return;
     };

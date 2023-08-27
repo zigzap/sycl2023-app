@@ -1,13 +1,12 @@
 const std = @import("std");
 const zap = @import("zap");
-
+const bundledOrLocalDirPathOwned = @import("../maybebundledfile.zig").bundledOrLocalDirPathOwned;
 const Self = @This();
 
 allocator: std.mem.Allocator,
 endpoint: zap.SimpleEndpoint,
 debug: bool = true,
 settings: Settings,
-www_root_cage: []const u8,
 frontend_dir_absolute: []const u8,
 
 fn log(self: *Self, comptime fmt: []const u8, args: anytype) void {
@@ -19,7 +18,6 @@ fn log(self: *Self, comptime fmt: []const u8, args: anytype) void {
 pub const Settings = struct {
     allocator: std.mem.Allocator,
     endpoint_path: []const u8,
-    www_root: []const u8,
     index_html: []const u8,
 };
 
@@ -40,38 +38,20 @@ pub fn init(settings: Settings) !Self {
         }),
         .settings = settings,
         .frontend_dir_absolute = undefined,
-        .www_root_cage = undefined,
     };
 
-    // remember abs path of www_root
-    ret.www_root_cage = try std.fs.cwd().realpathAlloc(ret.allocator, settings.www_root);
-    std.log.info("Frontend: using www_root: {s}", .{ret.www_root_cage});
-
-    // check for endpoint_path within www_root_cage
-    const root_dir = try std.fs.cwd().openDir(ret.www_root_cage, .{});
-
-    // try to find the frontend subdir = endpoint_path without leading /
-    const frontend_dir_stat = try root_dir.statFile(settings.endpoint_path[1..]);
-    if (!(frontend_dir_stat.kind == .directory)) {
-        return error.NotADirectory;
-    }
-
     // create frontend_dir_absolute for later
-    ret.frontend_dir_absolute = try root_dir.realpathAlloc(ret.allocator, settings.endpoint_path[1..]);
-    std.log.info("Frontend: using frontend root: {s}", .{ret.frontend_dir_absolute});
+    ret.frontend_dir_absolute = try bundledOrLocalDirPathOwned(ret.allocator, settings.endpoint_path[1..]);
+    ret.frontend_dir_absolute = try std.fs.realpathAlloc(ret.allocator, ret.frontend_dir_absolute);
 
-    // check if frontend_dir_absolute starts with www_root_absolute
-    // to avoid weird linking leading to
-    if (!std.mem.startsWith(u8, ret.frontend_dir_absolute, ret.www_root_cage)) {
-        return error.FrontendDirNotInRootDir;
-    }
+    std.log.info("Frontend: using frontend root: {s}", .{ret.frontend_dir_absolute});
+    std.log.info("Frontend: using endpoint path: {s}", .{settings.endpoint_path});
 
     return ret;
 }
 
 pub fn deinit(self: *Self) void {
     self.allocator.free(self.frontend_dir_absolute);
-    self.allocator.free(self.www_root_cage);
 }
 
 pub fn getFrontendEndpoint(self: *Self) *zap.SimpleEndpoint {
@@ -87,6 +67,7 @@ fn getFrontend(e: *zap.SimpleEndpoint, r: zap.SimpleRequest) void {
 
 fn getFrontenInternal(self: *Self, r: zap.SimpleRequest) !void {
     var fn_buf: [2048]u8 = undefined;
+    _ = fn_buf;
     if (r.path) |p| {
         var html_path: []const u8 = undefined;
         var is_root: bool = false;
@@ -103,16 +84,24 @@ fn getFrontenInternal(self: *Self, r: zap.SimpleRequest) !void {
             html_path = p;
         }
 
-        if (std.fmt.bufPrint(&fn_buf, "{s}{s}", .{ self.www_root_cage, html_path })) |fp| {
-            // now check if the absolute path starts with the frontend cage
-            if (std.mem.startsWith(u8, fp, self.frontend_dir_absolute)) {
+        // check if request seems valid
+        if (std.mem.startsWith(u8, html_path, self.settings.endpoint_path)) {
+            // we can safely strip the endpoint path
+            // then we make the path absolute and check if it still starts with the endpoint path`
+            const endpointless = html_path[self.settings.endpoint_path.len..];
+            // now append endpointless to absolute endpoint_path
+            const calc_abs_path = try std.fmt.allocPrint(self.allocator, "{s}{s}", .{ self.frontend_dir_absolute, endpointless });
+            const real_calc_abs_path = try std.fs.realpathAlloc(self.allocator, calc_abs_path);
+            if (std.mem.startsWith(u8, real_calc_abs_path, self.frontend_dir_absolute)) {
                 try r.setHeader("Cache-Control", "no-cache");
-                try r.sendFile(fp);
+                try r.sendFile(real_calc_abs_path);
                 return;
             } // else 404 below
-        } else |err| {
-            std.debug.print("Error: {}\n", .{err});
-            // continue with 404 below
+            else {
+                std.debug.print("html path {s} does not start with {s}\n", .{ real_calc_abs_path, self.frontend_dir_absolute });
+            }
+        } else {
+            std.debug.print("html path {s} does not start with {s}\n", .{ html_path, self.settings.endpoint_path });
         }
     }
 

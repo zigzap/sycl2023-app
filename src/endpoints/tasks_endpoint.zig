@@ -3,6 +3,7 @@ const zap = @import("zap");
 const Tasks = @import("../tasks.zig");
 const Participants = @import("../participants.zig");
 const Participant = Participants.Participant;
+const bundledOrLocalFilePathOwned = @import("../maybebundledfile.zig").bundledOrLocalFilePathOwned;
 
 const is_debug_build = @import("builtin").mode == std.builtin.Mode.Debug;
 
@@ -11,6 +12,7 @@ endpoint: zap.SimpleEndpoint = undefined,
 participants: Participants = undefined,
 tasks: Tasks = undefined,
 max_participants: usize,
+task_template_filp: []const u8 = undefined,
 
 pub const Self = @This();
 
@@ -26,6 +28,8 @@ pub fn init(
     task_template_filn: []const u8,
     max_participants: usize,
 ) !Self {
+    const template_filp = try bundledOrLocalFilePathOwned(a, task_template_filn);
+    defer a.free(template_filp);
     var ret: Self = .{
         .tasks = try Tasks.init(a, task_template_filn),
         .alloc = a,
@@ -38,8 +42,14 @@ pub fn init(
         }),
         .participants = try Participants.init(a, max_participants),
         .max_participants = max_participants,
+        .task_template_filp = std.fs.cwd().realpathAlloc(a, template_filp) catch task_template_filn,
     };
     return ret;
+}
+
+pub fn deinit(self: *Self) void {
+    self.alloc.free(self.task_template_filp);
+    self.participants.deinit();
 }
 
 pub fn getParticipants(self: *Self) *Participants {
