@@ -2,6 +2,7 @@ const std = @import("std");
 const zap = @import("zap");
 const Participants = @import("../participants.zig");
 const Participant = Participants.Participant;
+const bundledOrLocalDirPathOwned = @import("../maybebundledfile.zig").bundledOrLocalDirPathOwned;
 
 // we hacked passing in the Authenticator so we can call .logout() on it.
 pub fn Endpoint(comptime Authenticator: type) type {
@@ -11,11 +12,12 @@ pub fn Endpoint(comptime Authenticator: type) type {
         endpoint: zap.SimpleEndpoint = undefined,
         io_mutex: std.Thread.Mutex = .{},
         authenticator: *Authenticator,
+        frontend_dir_absolute: []const u8,
 
         const Self = @This();
 
         pub fn init(a: std.mem.Allocator, participants_path: []const u8, participants: *Participants, authenticator: *Authenticator) !Self {
-            return .{
+            var ret = Self{
                 .allocator = a,
                 .participants = participants,
                 .endpoint = zap.SimpleEndpoint.init(.{
@@ -27,7 +29,20 @@ pub fn Endpoint(comptime Authenticator: type) type {
                     .unauthorized = unauthorized,
                 }),
                 .authenticator = authenticator,
+                .frontend_dir_absolute = undefined,
             };
+            // create frontend_dir_absolute for later
+            const maybe_relpath = try bundledOrLocalDirPathOwned(ret.allocator, participants_path[1..]);
+            defer ret.allocator.free(maybe_relpath);
+            ret.frontend_dir_absolute = try std.fs.realpathAlloc(ret.allocator, maybe_relpath);
+
+            std.log.info("Admin: using admin root: {s}", .{ret.frontend_dir_absolute});
+            std.log.info("Admin: using admin endpoint: {s}", .{participants_path});
+            return ret;
+        }
+
+        pub fn deinit(self: *Self) void {
+            self.allocator.free(self.frontend_dir_absolute);
         }
 
         pub fn getAdminEndpoint(self: *Self) *zap.SimpleEndpoint {
@@ -50,12 +65,13 @@ pub fn Endpoint(comptime Authenticator: type) type {
         fn getInternal(self: *Self, r: zap.SimpleRequest) !void {
             if (r.path) |p| {
                 const local_path = p[6..];
+                var destination: ?[]const u8 = null;
 
                 try r.setHeader("Cache-Control", "no-cache");
                 r.setStatus(zap.StatusCode.ok);
 
                 if (std.mem.eql(u8, local_path, "/login")) {
-                    try r.sendFile("admin/login.html");
+                    destination = "/admin/login.html";
                 }
 
                 if (std.mem.eql(u8, local_path, "/logout")) {
@@ -78,10 +94,31 @@ pub fn Endpoint(comptime Authenticator: type) type {
                 }
 
                 // ELSE serve file
-                const file_path = p[1..];
-                std.debug.print("Trying to serve: {s}\n", .{file_path});
+                const html_path = destination orelse p;
+                std.debug.print("Trying to serve: {s}\n", .{html_path});
 
-                try r.sendFile(file_path);
+                // check if request seems valid
+                if (std.mem.startsWith(u8, html_path, self.endpoint.settings.path)) {
+                    // we can safely strip the endpoint path
+                    // then we make the path absolute and check if it still starts with the endpoint path`
+                    const endpointless = html_path[self.endpoint.settings.path.len..];
+                    // now append endpointless to absolute endpoint_path
+                    const calc_abs_path = try std.fmt.allocPrint(self.allocator, "{s}{s}", .{ self.frontend_dir_absolute, endpointless });
+                    defer self.allocator.free(calc_abs_path);
+                    const real_calc_abs_path = try std.fs.realpathAlloc(self.allocator, calc_abs_path);
+                    defer self.allocator.free(real_calc_abs_path);
+
+                    if (std.mem.startsWith(u8, real_calc_abs_path, self.frontend_dir_absolute)) {
+                        try r.setHeader("Cache-Control", "no-cache");
+                        try r.sendFile(real_calc_abs_path);
+                        return;
+                    } // else 404 below
+                    else {
+                        std.debug.print("html path {s} does not start with {s}\n", .{ real_calc_abs_path, self.frontend_dir_absolute });
+                    }
+                } else {
+                    std.debug.print("html path {s} does not start with {s}\n", .{ html_path, self.endpoint.settings.path });
+                }
             }
         }
 

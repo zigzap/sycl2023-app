@@ -89,6 +89,7 @@ pub fn main() !void {
         .endpoint_path = FRONTEND_SLUG,
         .index_html = FRONTEND_SLUG ++ "/index.html",
     });
+    defer frontendEndpoint.deinit();
 
     //
     // /admin
@@ -124,6 +125,7 @@ pub fn main() !void {
         participants,
         &pw_authenticator,
     );
+    defer adminEndpoint.deinit();
 
     // We wrap the admin endpoint that does the actual work in the PW authenticator
     const PWAuthenticatingEndpoint = zap.AuthenticatingEndpoint(PWAuthenticator.Authenticator);

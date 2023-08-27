@@ -41,11 +41,12 @@ pub fn init(settings: Settings) !Self {
     };
 
     // create frontend_dir_absolute for later
-    ret.frontend_dir_absolute = try bundledOrLocalDirPathOwned(ret.allocator, settings.endpoint_path[1..]);
-    ret.frontend_dir_absolute = try std.fs.realpathAlloc(ret.allocator, ret.frontend_dir_absolute);
+    const maybe_relpath = try bundledOrLocalDirPathOwned(ret.allocator, settings.endpoint_path[1..]);
+    defer ret.allocator.free(maybe_relpath);
+    ret.frontend_dir_absolute = try std.fs.realpathAlloc(ret.allocator, maybe_relpath);
 
     std.log.info("Frontend: using frontend root: {s}", .{ret.frontend_dir_absolute});
-    std.log.info("Frontend: using endpoint path: {s}", .{settings.endpoint_path});
+    std.log.info("Frontend: using frontend endpoint: {s}", .{settings.endpoint_path});
 
     return ret;
 }
@@ -91,7 +92,9 @@ fn getFrontenInternal(self: *Self, r: zap.SimpleRequest) !void {
             const endpointless = html_path[self.settings.endpoint_path.len..];
             // now append endpointless to absolute endpoint_path
             const calc_abs_path = try std.fmt.allocPrint(self.allocator, "{s}{s}", .{ self.frontend_dir_absolute, endpointless });
+            defer self.allocator.free(calc_abs_path);
             const real_calc_abs_path = try std.fs.realpathAlloc(self.allocator, calc_abs_path);
+            defer self.allocator.free(real_calc_abs_path);
             if (std.mem.startsWith(u8, real_calc_abs_path, self.frontend_dir_absolute)) {
                 try r.setHeader("Cache-Control", "no-cache");
                 try r.sendFile(real_calc_abs_path);
