@@ -41,7 +41,7 @@
       in rec {
         devShells.default = pkgs.mkShell {
           nativeBuildInputs = with pkgs; [
-            neovim-nightly-pkgs.neovim
+            # neovim-nightly-pkgs.neovim
             zigpkgs."0.11.0"
             python3
             poetry
